@@ -1,0 +1,11 @@
+- Intro
+- Shadow Sculptures
+  - Larry Kagan
+- How to break down problem framework etc
+  - parts implemented
+  - rendering shadow
+  - representing object
+  - render shadow
+  - creating sculpture
+    - ideas
+    - future work

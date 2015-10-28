@@ -33,9 +33,72 @@ edges = (
   (5,7)
   )
 
+verticesW = (
+  (-4, -4, -2),
+  (-4, 4, -2),
+  (4, 4, -2),
+  (4, -4, -2)
+  )
+
+edgesW = (
+  (0,1),
+  (1,2),
+  (2,3),
+  (0,3)
+  )
+
 radius = .1
 
-def cube( q ):
+def surface(edges, vertices, width, height):
+  glTexImage2D
+
+def loadImage(filename):
+  textureSurface = pygame.image.load(filename)
+  textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+
+  width = textureSurface.get_width()
+  height = textureSurface.get_width()
+
+  texture = glGenTextures(1)
+  glBindTexture(GL_TEXTURE_2D, texture)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, \
+    GL_UNSIGNED_BYTE, textureData)
+
+  return texture, width, height
+
+def createTexDL(texture, width, height, vertices):
+  newList = glGenLists(1)
+  glNewList(newList,GL_COMPILE);
+  glBindTexture(GL_TEXTURE_2D, texture)
+  glBegin(GL_QUADS)
+
+  vertex = vertices[0]
+  # Bottom Left Of The Texture and Quad
+  glTexCoord2f(vertex[0], vertex[1])
+  glVertex2f(0, 0)
+
+  vertex = vertices[1]
+  # Top Left Of The Texture and Quad
+  glTexCoord2f(vertex[0], vertex[1])
+  glVertex2f(0, height)
+
+  vertex = vertices[2]
+  # Top Right Of The Texture and Quad
+  glTexCoord2f(vertex[0], vertex[1])
+  glVertex2f( width,  height)
+
+  vertex = vertices[2]
+  # Bottom Right Of The Texture and Quad
+  glTexCoord2f(vertex[0], vertex[1])
+  glVertex2f(width, 0)
+  glEnd()
+  glEndList()
+
+  return newList
+
+def cube( q, edges, vertices ):
   for edge in edges:
     cylinder( q, vertices[edge[0]], vertices[edge[1]], radius )
   for vertex in vertices:
@@ -94,6 +157,7 @@ def main():
   glColor3fv((.3, .5, .7))
   #
   glEnable(GL_COLOR_MATERIAL)
+  glEnable(GL_TEXTURE_2D)
 
   # Set shader properties of objects
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (0.7, 0.7, 0.7, 1.0))
@@ -113,6 +177,9 @@ def main():
   gluQuadricNormals(quadric, GLU_SMOOTH)
   gluQuadricTexture(quadric, GL_TRUE)
 
+  # get texture from filename
+  texture, width, height = loadImage("QR.png")
+
   gluPerspective(40, (1.0*display[0]/display[1]), 0.1, 50.0)
   glTranslatef(0.0, 0.0, -10)
   glEnable(GL_DEPTH_TEST)
@@ -125,7 +192,9 @@ def main():
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
     glRotatef(2, 1, 5, 3)
-    cube(quadric)
+    cube(quadric, edges, vertices)
+    cube(quadric, edgesW, verticesW)
+    glCallList(createTexDL(texture, width, height, verticesW))
     glDisable(GL_LIGHTING)
     pygame.display.flip()
     pygame.time.wait(10)
