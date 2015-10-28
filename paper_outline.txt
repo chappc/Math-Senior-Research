@@ -1,0 +1,14 @@
+contingency plan for the paper:
+	1.0 Intro
+	2.0 Shadow Sculptures by Larry Kagen
+	3.0 Problem Framework
+		-and any important ideas/concepts developed
+		-How we represent Sculptures
+		-How we render shadows
+		-how we draw the sculpture in 3D
+		-ideas for creating sculptures
+		-3D printing???
+	conclusion/future work
+	
+if there is some cool method for creating scultures, talk about
+that instead of "ideas for creating sculptures".
