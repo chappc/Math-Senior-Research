@@ -6,6 +6,7 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
+import sys
 
 vertices= (
   (1, -1, -1),
@@ -145,7 +146,7 @@ def cylinder( q, v1, v2, r ):
   glPopMatrix()
 
 
-def main():
+def main(strandFile, shadowFile):
   # Start pygame
   pygame.init()
   display = (1024,720)
@@ -200,5 +201,7 @@ def main():
     pygame.time.wait(10)
 
 if __name__=="__main__":
-  main()
-
+    if len(sys.argv) < 3:
+        print 'usage: python ray-tracing2.py <strand-file> <shadow-file>'
+        sys.exit(2)
+    main(sys.argv[1], sys.argv[2])
