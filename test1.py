@@ -7,7 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
 
-vertices= (
+vertices= [
   (1, -1, -1),
   (1, 1, -1),
   (-1, 1, -1),
@@ -16,9 +16,9 @@ vertices= (
   (1, 1, 1),
   (-1, -1, 1),
   (-1, 1, 1)
-  )
+  ]
 
-edges = (
+edges = [
   (0,1),
   (0,3),
   (0,4),
@@ -31,7 +31,7 @@ edges = (
   (5,1),
   (5,4),
   (5,7)
-  )
+  ]
 
 verticesW = (
   (-4, -4, -2),
@@ -59,40 +59,43 @@ def loadImage(filename):
   width = textureSurface.get_width()
   height = textureSurface.get_width()
 
+  return textureData, width, height
+
+def bindImage( textureData, width, height ):
   texture = glGenTextures(1)
   glBindTexture(GL_TEXTURE_2D, texture)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, \
     GL_UNSIGNED_BYTE, textureData)
-
-  return texture, width, height
+  return texture
 
 def createTexDL(texture, width, height, vertices):
   newList = glGenLists(1)
   glNewList(newList,GL_COMPILE);
   glBindTexture(GL_TEXTURE_2D, texture)
   glBegin(GL_QUADS)
-
   vertex = vertices[0]
+
   # Bottom Left Of The Texture and Quad
-  glTexCoord2f(vertex[0], vertex[1])
-  glVertex2f(0, 0)
+  glTexCoord2f(0, 0)
+  glVertex2f(vertex[0], vertex[1])
 
   vertex = vertices[1]
   # Top Left Of The Texture and Quad
-  glTexCoord2f(vertex[0], vertex[1])
-  glVertex2f(0, height)
+  glTexCoord2f(0, 1)
+  glVertex2f(vertex[0], vertex[1])
 
   vertex = vertices[2]
   # Top Right Of The Texture and Quad
-  glTexCoord2f(vertex[0], vertex[1])
-  glVertex2f( width,  height)
+  glTexCoord2f(1,  0)
+  glVertex2f(vertex[0], vertex[1])
 
   vertex = vertices[2]
   # Bottom Right Of The Texture and Quad
-  glTexCoord2f(vertex[0], vertex[1])
-  glVertex2f(width, 0)
+  glTexCoord2f(1, 1)
+  glVertex2f(vertex[0], vertex[1])
+
   glEnd()
   glEndList()
 
@@ -178,7 +181,7 @@ def main():
   gluQuadricTexture(quadric, GL_TRUE)
 
   # get texture from filename
-  texture, width, height = loadImage("QR.png")
+  texData, width, height = loadImage("QR.png")
 
   gluPerspective(40, (1.0*display[0]/display[1]), 0.1, 50.0)
   glTranslatef(0.0, 0.0, -10)
@@ -194,7 +197,12 @@ def main():
     glRotatef(2, 1, 5, 3)
     cube(quadric, edges, vertices)
     cube(quadric, edgesW, verticesW)
+    glPushMatrix()
+    glTranslatef(0,0,verticesW[0][2])
+    texture = bindImage(texData, width, height)
     glCallList(createTexDL(texture, width, height, verticesW))
+    glPopMatrix()
+    glDeleteTextures([texture])
     glDisable(GL_LIGHTING)
     pygame.display.flip()
     pygame.time.wait(10)
