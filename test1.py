@@ -8,32 +8,6 @@ from OpenGL.GLU import *
 import math
 import sys
 
-vertices= [
-  (1, -1, -1),
-  (1, 1, -1),
-  (-1, 1, -1),
-  (-1, -1, -1),
-  (1, -1, 1),
-  (1, 1, 1),
-  (-1, -1, 1),
-  (-1, 1, 1)
-  ]
-
-edges = [
-  (0,1),
-  (0,3),
-  (0,4),
-  (2,1),
-  (2,3),
-  (2,7),
-  (6,3),
-  (6,4),
-  (6,7),
-  (5,1),
-  (5,4),
-  (5,7)
-  ]
-
 verticesW = (
   (-4, -4, -2),
   (-4, 4, -2),
@@ -148,8 +122,33 @@ def cylinder( q, v1, v2, r ):
   gluCylinder( q, r, r, v, 20, 1 )
   glPopMatrix()
 
-
+def build_v_and_e(strandFile):
+  strands = []
+  f = open(strandFile,'r')
+  while True:
+    line = f.readline()
+    if line == '\n' or line == '':
+      break
+    strands.append([])
+    while not (line == '\n' or line == ''):
+      strands[-1].append( [float(x) for x in line.split(',')] )
+      line = f.readline()
+  f.close()
+  verticies = []
+  edges = []
+  i = 0
+  for strand in strands:
+    verticies.append(strand[0])
+    i += 1
+    for p in strand[1:]:
+      verticies.append(p)
+      edges.append((i-1,i))
+      i += 1
+  return verticies,edges
+  
 def main(strandFile, shadowFile):
+  vertices,edges = build_v_and_e(strandFile)
+  
   # Start pygame
   pygame.init()
   display = (1024,720)
