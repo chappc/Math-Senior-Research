@@ -36,9 +36,9 @@ edges = [
 
 verticesW = (
   (-4, -4, -2),
-  (-4, 4, -2),
+  (4, -4, -2),
   (4, 4, -2),
-  (4, -4, -2)
+  (-4, 4, -2)
   )
 
 edgesW = (
@@ -49,9 +49,6 @@ edgesW = (
   )
 
 radius = .1
-
-def surface(edges, vertices, width, height):
-  glTexImage2D
 
 def loadImage(filename):
   textureSurface = pygame.image.load(filename)
@@ -71,10 +68,9 @@ def bindImage( textureData, width, height ):
     GL_UNSIGNED_BYTE, textureData)
   return texture
 
-def createTexDL(texture, width, height, vertices):
+def createTexDL(width, height, vertices):
   newList = glGenLists(1)
   glNewList(newList,GL_COMPILE);
-  glBindTexture(GL_TEXTURE_2D, texture)
   glBegin(GL_QUADS)
   vertex = vertices[0]
 
@@ -83,18 +79,18 @@ def createTexDL(texture, width, height, vertices):
   glVertex2f(vertex[0], vertex[1])
 
   vertex = vertices[1]
-  # Top Left Of The Texture and Quad
-  glTexCoord2f(0, 1)
+  # Bottom Right Of The Texture and Quad
+  glTexCoord2f(1, 0)
   glVertex2f(vertex[0], vertex[1])
 
   vertex = vertices[2]
   # Top Right Of The Texture and Quad
-  glTexCoord2f(1,  0)
+  glTexCoord2f(1, 1)
   glVertex2f(vertex[0], vertex[1])
 
-  vertex = vertices[2]
-  # Bottom Right Of The Texture and Quad
-  glTexCoord2f(1, 1)
+  vertex = vertices[3]
+  # Top Left Of The Texture and Quad
+  glTexCoord2f(0, 1)
   glVertex2f(vertex[0], vertex[1])
 
   glEnd()
@@ -157,8 +153,6 @@ def main(strandFile, shadowFile):
 
   # Set background color
   glClearColor (.8, .8, .8, 1.0)
-  # Set object color
-  glColor3fv((.3, .5, .7))
   #
   glEnable(GL_COLOR_MATERIAL)
   glEnable(GL_TEXTURE_2D)
@@ -196,12 +190,17 @@ def main(strandFile, shadowFile):
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
     glRotatef(2, 1, 5, 3)
+    # Set object color
+    glColor3fv((.3, .5, .7))
     cube(quadric, edges, vertices)
     cube(quadric, edgesW, verticesW)
     glPushMatrix()
     glTranslatef(0,0,verticesW[0][2])
+    # Set object color
+    glColor3fv((1, 1, 1))
     texture = bindImage(texData, width, height)
-    glCallList(createTexDL(texture, width, height, verticesW))
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glCallList(createTexDL(width, height, verticesW))
     glPopMatrix()
     glDeleteTextures([texture])
     glDisable(GL_LIGHTING)
@@ -210,6 +209,6 @@ def main(strandFile, shadowFile):
 
 if __name__=="__main__":
     if len(sys.argv) < 3:
-        print 'usage: python ray-tracing2.py <strand-file> <shadow-file>'
+        print 'usage: python ', sys.argv[0], '<strand-file> <shadow-file>'
         sys.exit(2)
     main(sys.argv[1], sys.argv[2])
