@@ -9,10 +9,10 @@ import math
 import sys
 
 verticesW = (
-  (-4, -4, -2),
-  (4, -4, -2),
-  (4, 4, -2),
-  (-4, 4, -2)
+  (-1, -1, 0),
+  (2, -1, 0),
+  (2, 2, 0),
+  (-1, 2, 0)
   )
 
 edgesW = (
@@ -22,7 +22,7 @@ edgesW = (
   (0,3)
   )
 
-radius = .1
+radius = .02
 
 def loadImage(filename):
   textureSurface = pygame.image.load(filename)
@@ -157,13 +157,16 @@ def main(strandFile, shadowFile):
   glEnable(GL_TEXTURE_2D)
 
   # Set shader properties of objects
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (0.7, 0.7, 0.7, 1.0))
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, (1.0, 1.0, 1.0, 1.0))
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, (50.0))
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, (0.7, 0.7, 0.7, 1.0))
+  glMaterialfv(GL_FRONT, GL_SPECULAR, (1.0, 1.0, 1.0, 1.0))
+  glMaterialfv(GL_FRONT, GL_SHININESS, (100.0))
   glShadeModel (GL_SMOOTH);
 
   # Set light position and intensity
-  glLightfv( GL_LIGHT0, GL_POSITION, ( -20, 100, -0.5, 0.1 ) )
+  glLightfv( GL_LIGHT0, GL_POSITION, ( -20, 100, -0.5, 0.2 ) )
+  glLightfv( GL_LIGHT0, GL_DIFFUSE, ( 1, 1, 1, .2 ) )
+  glLightfv( GL_LIGHT0, GL_SPECULAR, ( 1, 1, 1, .2 ) )
+  glLightfv( GL_LIGHT0, GL_AMBIENT, ( .8, .8, .8, 1 ) )
 
   # Allow GL to figure out how to render objects with depth
   glEnable(GL_DEPTH_TEST)
@@ -175,9 +178,9 @@ def main(strandFile, shadowFile):
   gluQuadricTexture(quadric, GL_TRUE)
 
   # get texture from filename
-  texData, width, height = loadImage("QR.png")
+  texData, width, height = loadImage(shadowFile)
 
-  gluPerspective(40, (1.0*display[0]/display[1]), 0.1, 50.0)
+  gluPerspective(20, (1.0*display[0]/display[1]), 0.1, 50.0)
   glTranslatef(0.0, 0.0, -10)
   glEnable(GL_DEPTH_TEST)
   while True:
@@ -190,7 +193,7 @@ def main(strandFile, shadowFile):
     glEnable(GL_LIGHT0)
     glRotatef(2, 1, 5, 3)
     # Set object color
-    glColor3fv((.3, .5, .7))
+    glColor3fv((.1, .2, .3))
     cube(quadric, edges, vertices)
     cube(quadric, edgesW, verticesW)
     glPushMatrix()
