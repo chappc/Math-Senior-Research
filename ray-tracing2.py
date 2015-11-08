@@ -19,8 +19,6 @@ lights = [(0.00, 0.00, 1.00),
           (0.02, 0.01, 1.00),
           (0.00, 0.02, 1.00),
           (0.01, 0.02, 1.00)]
-          
-# intensity_per_light = 255 / length(lights)
 
 # convert a point from floating point coordinates to image coordinates
 def convert_point(pt):
