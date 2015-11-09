@@ -14,7 +14,7 @@ def loadImage(filename):
   textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
 
   width = textureSurface.get_width()
-  height = textureSurface.get_width()
+  height = textureSurface.get_height()
 
   return textureData, width, height
 
