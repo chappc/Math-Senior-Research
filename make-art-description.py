@@ -16,7 +16,7 @@ for light in lights:
 f.write('\n')
 
 f.write('radius= 0.02\n')
-f.write('region= -1.0,2.0,-1.0,2.0\n')
+f.write('region= -0.5,3.5,-1.0,2.0\n')
 f.write('resolution= 3000,3000\n')
 f.write('\n')
 

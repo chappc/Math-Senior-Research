@@ -7,22 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
 import sys
-
-verticesW = (
-  (-1, -1, 0),
-  (2, -1, 0),
-  (2, 2, 0),
-  (-1, 2, 0)
-  )
-
-edgesW = (
-  (0,1),
-  (1,2),
-  (2,3),
-  (0,3)
-  )
-
-radius = .02
+from ADParser import parse_file
 
 def loadImage(filename):
   textureSurface = pygame.image.load(filename)
@@ -72,7 +57,7 @@ def createTexDL(width, height, vertices):
 
   return newList
 
-def cube( q, edges, vertices ):
+def cube( q, edges, vertices, radius ):
   for edge in edges:
     cylinder( q, vertices[edge[0]], vertices[edge[1]], radius )
   for vertex in vertices:
@@ -118,18 +103,7 @@ def cylinder( q, v1, v2, r ):
   gluCylinder( q, r, r, v, 20, 1 )
   glPopMatrix()
 
-def build_v_and_e(strandFile):
-  strands = []
-  f = open(strandFile,'r')
-  while True:
-    line = f.readline()
-    if line == '\n' or line == '':
-      break
-    strands.append([])
-    while not (line == '\n' or line == ''):
-      strands[-1].append( [float(x) for x in line.split(',')] )
-      line = f.readline()
-  f.close()
+def build_v_and_e(strands):
   verticies = []
   edges = []
   i = 0
@@ -143,7 +117,23 @@ def build_v_and_e(strandFile):
   return verticies,edges
   
 def main(strandFile, shadowFile):
-  vertices,edges = build_v_and_e(strandFile)
+  lights, radius, region, resolution, strands = parse_file(strandFile)
+  vertices,edges = build_v_and_e(strands)
+  
+  x0,x1,y0,y1 = region
+  verticesW = (
+    (x0, y0, 0),
+    (x1, y0, 0),
+    (x1, y1, 0),
+    (x0, y1, 0)
+    )
+  
+  edgesW = (
+    (0,1),
+    (1,2),
+    (2,3),
+    (0,3)
+    )
   
   # Start pygame
   pygame.init()
@@ -194,8 +184,8 @@ def main(strandFile, shadowFile):
     glRotatef(2, 1, 5, 3)
     # Set object color
     glColor3fv((.1, .2, .3))
-    cube(quadric, edges, vertices)
-    cube(quadric, edgesW, verticesW)
+    cube(quadric, edges, vertices, radius)
+    cube(quadric, edgesW, verticesW, 0.02)
     glPushMatrix()
     glTranslatef(0,0,verticesW[0][2])
     # Set object color

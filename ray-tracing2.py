@@ -48,6 +48,8 @@ def cast_shadow(pix, light, point, radius, region, resolution):
             pt_y_high = int( (y1 - y_high)*imagey/(y1-y0) )
             if pt_y_high >= imagey:
                 pt_y_high = imagey-1
+            if pt_y_high < 0:
+                pt_y_high = 0
             for pt_y in xrange(pt_y_high, pt_y_low+1):
                 pix[pt_x,pt_y] = 0
     
