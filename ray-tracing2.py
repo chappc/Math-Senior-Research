@@ -1,24 +1,7 @@
 import Image
 import sys
 from math import sqrt
-
-imagex = 3000
-imagey = 3000
-x0 = -1.0
-x1 = 2.0
-y0 = -1.0
-y1 = 2.0
-
-radius = 0.02
-
-lights = [(0.00, 0.00, 1.00),
-          (0.01, 0.00, 1.00),
-          (0.01, 0.01, 1.00),
-          (0.00, 0.01, 1.00),
-          (0.02, 0.00, 1.00),
-          (0.02, 0.01, 1.00),
-          (0.00, 0.02, 1.00),
-          (0.01, 0.02, 1.00)]
+from ADParser import parse_file
 
 # convert a point from floating point coordinates to image coordinates
 def convert_point(pt):
@@ -29,7 +12,9 @@ def convert_point(pt):
     else:
         return None
 
-def cast_shadow(pix, light, point, radius):
+def cast_shadow(pix, light, point, radius, region, resolution):
+    x0,x1,y0,y1 = region
+    imagex,imagey = resolution
     if point[2]+radius >= light[2]: #this is the case where a hyperbolic shadow
         return                      #is cast. handle this later
     #elliptical shadow:
@@ -67,18 +52,9 @@ def cast_shadow(pix, light, point, radius):
                 pix[pt_x,pt_y] = 0
     
 def main(infile, outfile):
-    strands = []
-    f = open(infile,'r')
-    while True:
-        line = f.readline()
-        if line == '\n' or line == '':
-            break
-        strands.append([])
-        while not (line == '\n' or line == ''):
-            strands[-1].append( [float(x) for x in line.split(',')] )
-            line = f.readline()
-    f.close()
-    print '%d stands found in file'%len(strands)
+    lights, radius, region, resolution, strands = parse_file(infile)
+    x0,x1,y0,y1 = region
+    imagex,imagey = resolution
     
     ims = [] #one image for each light
     
@@ -87,7 +63,7 @@ def main(infile, outfile):
         pix = im.load()
         for strand in strands:
             for point in strand:
-                cast_shadow(pix, light, point, radius)
+                cast_shadow(pix, light, point, radius, region, resolution)
         ims.append(im)
     
     if len(ims) != 0:

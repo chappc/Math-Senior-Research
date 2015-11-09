@@ -39,7 +39,7 @@ def parse_resolution(file):
   parts = line.split('=')
   if len(parts) != 2 or parts[0] != 'resolution':
     raise ADParseError
-  resolution = [float(x) for x in parts[1].split(',')]
+  resolution = [int(x) for x in parts[1].split(',')]
   if len(resolution) != 2:
     raise ADParseError
   return resolution
