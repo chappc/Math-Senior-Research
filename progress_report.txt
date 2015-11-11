@@ -1,0 +1,21 @@
+Name:
+
+Senior Research: Form 3: Thesis Progress
+
+Report Due: Wednesday November 4th
+
+Please submit this form via LMS between November 4 and November 11th.
+
+The thesis is to be a minimum of 15 pages (20 pages for groups of 2 students), double spaced and will be submitted electronically to the Department of Mathematical Sciences to fulfill the Senior Research requirement.
+
+Student(s) working on project: James Hoctor, Christopher Chappell
+
+Faculty supervisor: Kristin Bennet
+
+Title of the thesis: Shadow Sculptures: Encrypting Images in 2-space with Objects in 3-space.
+Tentative abstract of thesis: This paper discusses the creation of three dimensional objects, given a shadow, a light source, and a wall, such that the three dimensional object creates the shadow on the wall when placed under the point light source.  This problem has been used as a source of inspiration for the artwork of Larry Kagan, a retired professor at RPI.  The methods of this paper attempt to recreate his methods in an ...
+
+Progress to date: Have been able to make simulations of models using a 3D graph with spheres at the nodes and cylinders along the edges.  Have accurately rendered shadows for said models.  Have formulated a possible method for solving the backward problem using a genetic algorithm, and made a framework for writing said algorithm.
+Steps remaining: Complete testing for the framework, write the genome for the genetic algorithm, and test its functionality.
+
+Any challenges for which you would like additional help: None yet.
