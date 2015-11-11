@@ -1,0 +1,22 @@
+shadow is always cast on the z=0 plane from the positive z direction
+
+top of the file should have the format:
+- a list of point light sources to simulate a diffuse light source
+  - first line is exactly: 'lights section:\n'
+  - then the lights are specified one per line in lines that look like:
+    '0.02, 0.01, 1.0\n'
+	where these numbers are the x, y, and z coordinates respectively.
+- one empty line ('\n')
+- the radius of the bar stock in a line of the form 'radius= 0.02\n'
+- a rectangular region of interest on the z=0 plane in a line that looks like:
+  'region= -1.0,2.0,-1.0,2.0\n'
+  where the four numbers are the minimum x, maximum x, minumum y, and maximum y values
+  respectively in the rectangular region.
+- the width and height, in pixels, of the image to map to the region of interest in
+  a line that looks like: 'resolution= 3000,3000\n'
+
+then there must be an empty lined
+
+body of the file is:
+- a list of strands of metal, separated by empty lines and terminated by a pair of
+  blank lines

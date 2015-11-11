@@ -1,0 +1,5 @@
+*.pyc
+*.ad
+*.jpeg
+*.jpg
+/build

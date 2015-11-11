@@ -1,4 +1,0 @@
-basically a list of strands of metal, separated by empty lines
-fundamental length unit for this problem should be the diameter of the bar stock
-each strand is a list of points each separated by distance epsilon from its neighbors.
-there should be a limit on the second derivative of each bar
