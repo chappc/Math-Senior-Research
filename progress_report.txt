@@ -1,21 +1,15 @@
-Name:
-
-Senior Research: Form 3: Thesis Progress
-
-Report Due: Wednesday November 4th
-
-Please submit this form via LMS between November 4 and November 11th.
-
-The thesis is to be a minimum of 15 pages (20 pages for groups of 2 students), double spaced and will be submitted electronically to the Department of Mathematical Sciences to fulfill the Senior Research requirement.
+Name: James Hoctor
 
 Student(s) working on project: James Hoctor, Christopher Chappell
 
 Faculty supervisor: Kristin Bennet
 
 Title of the thesis: Shadow Sculptures: Encrypting Images in 2-space with Objects in 3-space.
-Tentative abstract of thesis: This paper discusses the creation of three dimensional objects, given a shadow, a light source, and a wall, such that the three dimensional object creates the shadow on the wall when placed under the point light source.  This problem has been used as a source of inspiration for the artwork of Larry Kagan, a retired professor at RPI.  The methods of this paper attempt to recreate his methods in an ...
 
-Progress to date: Have been able to make simulations of models using a 3D graph with spheres at the nodes and cylinders along the edges.  Have accurately rendered shadows for said models.  Have formulated a possible method for solving the backward problem using a genetic algorithm, and made a framework for writing said algorithm.
-Steps remaining: Complete testing for the framework, write the genome for the genetic algorithm, and test its functionality.
+Tentative abstract of thesis: This paper discusses the creation of three dimensional objects, given a shadow, a light source, and a wall, such that the object creates the shadow on the wall when placed under the light source. This problem was inspired by the artwork of Larry Kagan, a retired professor at RPI. The use of classical and real valued genetic algorithms to create these objects is demonstrated. A visualization tool is described that shows how the object would look as a finished product. We describe our respresentation of an object which is based on the techniques Kagan uses in his art. An efficient way to calculate the shadow cast by an object with this representation is required in order to evaluate fitness in the genetic algorithm. We describe our approach to shadow rendering. Another component of fitness in the genetic algorith is fidelity of the cast shadow to the desired result. We use an industry standard algorithm which is often applied in image quality analysis to judge the quality of the shadows. Having described the means to evaluate the fitness of a candidate object, we proceed to explain the recombination techniques we used to create each generation of objects from the parent generation.
+
+Progress to date: Have been able to make simulations of models using a 3D graph with spheres at the nodes and cylinders along the edges. Have accurately rendered shadows for said models. Have formulated a possible method for solving the backward problem using a genetic algorithm, and made a framework for writing said algorithm.
+
+Steps remaining: Complete testing for the framework, write the genome for the genetic algorithm, and test its functionality. Also improve the shadow rendering efficiency.
 
 Any challenges for which you would like additional help: None yet.
