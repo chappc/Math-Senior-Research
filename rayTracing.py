@@ -2,84 +2,211 @@ import Image
 import sys
 from math import sqrt
 from ADParser import parse_file
+from math import floor
 
-# convert a point from floating point coordinates to image coordinates
-def convert_point(pt):
-    x = int( (pt[0] - x0)*imagex/(x1-x0) )
-    y = int( (y1 - pt[1])*imagey/(y1-y0) )
-    if 0 <= x < imagex and 0 <= y < imagey:
-        return (x,y)
+class vector():
+    def __init__(self, _x,_y,_z):
+        self.x = _x
+        self.y = _y
+        self.z = _z
+    
+    @classmethod
+    def fromList(cls, list):
+        return cls(list[0],list[1],list[2])
+    
+    def add(self, other):
+        return vector(self.x+other.x,
+                      self.y+other.y,
+                      self.z+other.z)
+    
+    def subtract(self, other):
+        return vector(self.x-other.x,
+                      self.y-other.y,
+                      self.z-other.z)
+    
+    def scalar_prod(self,alpha):
+        return vector(alpha*self.x,
+                      alpha*self.y,
+                      alpha*self.z)
+    
+    def dot_prod(self, other):
+        return self.x*other.x+self.y*other.y+self.z*other.z
+        
+    def length(self):
+        return sqrt(self.dot_prod(self))
+    
+    def distance(self, other):
+        return self.subtract(other).length()
+
+def check_inter_sphere(center,radius,light,sample_pt):
+    v1 = sample_pt.subtract(light)
+    v2 = sample_pt.subtract(center)
+    #divisoin by zero could result if sample_pt and light are the same:
+    alpha = v1.dot_prod(v2)/v1.dot_prod(v1)
+    if alpha > 0:
+        if alpha < 1:
+            closest = light.scalar_prod(alpha).add(sample_pt.scalar_prod(1-alpha))
+        else:
+            closest = light
     else:
-        return None
-
-def cast_shadow(pix, light, point, radius, region, resolution):
-    x0,x1,y0,y1 = region
-    imagex,imagey = resolution
-    if point[2]+radius >= light[2]: #this is the case where a hyperbolic shadow
-        return                      #is cast. handle this later
-    #elliptical shadow:
-    d = [point[0]-light[0], point[1]-light[1], point[2]-light[2]]
-    L_sqrd = d[0]**2 + d[1]**2 + d[2]**2
-    ldotl = light[0]**2 + light[1]**2 + light[2]**2
-    ddotl = d[0]*light[0] + d[1]*light[1] + d[2]*light[2]
-    a = d[1]**2 - L_sqrd + radius**2
-    b_base = -2*d[1]*ddotl + 2*light[1]*(L_sqrd - radius**2)
-    c_base = ddotl**2 - ldotl*(L_sqrd - radius**2)
-    b_co1 = 2*d[0]*d[1]
-    c_co1 = -2*d[0]*ddotl + 2*light[0]*(L_sqrd - radius**2)
-    c_co2 = d[0]**2 - L_sqrd + radius**2
-    for pt_x in xrange(0, imagex):
-        x = x0 + (x1-x0)*(float(pt_x)+0.5)/float(imagex)
-        b = b_base + x*b_co1
-        c = c_base + x*c_co1 + (x**2)*c_co2
-        det = b**2 - 4*a*c
-        if det >= 0:
-            sqrt_det_over_2a = sqrt(det)/(2*a)
-            vertex = -b/(2*a)
-            y_low  = vertex - sqrt_det_over_2a
-            y_high = vertex + sqrt_det_over_2a
-            if y_low > y_high:
-                y_low, y_high = y_high, y_low
-            if y_low > y1 or y_high < y0:
-                continue
-            pt_y_low  = int( (y1 - y_low )*imagey/(y1-y0) )
-            if pt_y_low >= imagey:
-                pt_y_low = imagey-1
-            pt_y_high = int( (y1 - y_high)*imagey/(y1-y0) )
-            if pt_y_high >= imagey:
-                pt_y_high = imagey-1
-            if pt_y_high < 0:
-                pt_y_high = 0
-            for pt_y in xrange(pt_y_high, pt_y_low+1):
-                pix[pt_x,pt_y] = 0
+        closest = sample_pt
+    return (center.distance(closest) <= radius)
+    
+def check_inter_cylinder(center1,center2,radius,light,sample_pt):
+    # matrix relation
+    # (a b) (alpha) = (e)
+    # (c d) (beta )   (f)
+    v1 = sample_pt.subtract(light)
+    v2 = center2.subtract(center1)
+    v3 = sample_pt.subtract(center2)
+    a = -v1.dot_prod(v1)
+    b =  v1.dot_prod(v2)
+    c = -b
+    d =  v2.dot_prod(v2)
+    e = -v1.dot_prod(v3)
+    f = -v2.dot_prod(v3)
+    
+    #Assume that:
+    # a != 0 b/c light and sample_pt are different
+    # d != 0 b/c the centers are diffent
+    
+    dprime = (d - (c/a)*b)
+    if dprime == 0: #d*a == c*b, which by Cauchy-Schwarz means that v1 and v2 are linearly dependant
+        alpha = 0
+        beta = f/d
+    else:
+        fprime = (f - (c/a)*e)
+        beta = fprime/dprime
+        alpha = (e - b*beta)/a
+    
+    if alpha > 0 and alpha < 1:
+        if beta > 0 and beta < 1:
+            v4 =   light.scalar_prod(alpha).add(sample_pt.scalar_prod(1-alpha))
+            v5 = center1.scalar_prod(beta ).add(  center2.scalar_prod(1-beta ))
+            return (v4.distance(v5) <= radius)
+        else:
+            return False
+    else: #check_inter_sphere(center,radius,light,sample_pt)
+        return ( check_inter_sphere(center1,  radius,light,sample_pt) or
+                 check_inter_sphere(center2,  radius,light,sample_pt) or
+                 check_inter_sphere(light,    radius,center1,center2) or
+                 check_inter_sphere(sample_pt,radius,center1,center2) )
+    
+def coordinate_magick(light,p,z,radius):
+    c = (z-light.z)/(p.z-light.z)
+    proj = light.scalar_prod(1-c).add(p.scalar_prod(c))
+    return ( int(floor(proj.x/radius)), int(floor(proj.y/radius)) )
+    
+# cutoffs must be sorted decending
+def greatest_index_gtoreq(cutoffs,z,min=0,max=None):
+    if max == None:
+        max = len(cutoffs)
+    if min == max:
+        return -1
+    if max == min+1:
+        if cutoffs[min] >= z:
+            return min
+        else:
+            return -1
+    mid = (min+max)/2
+    if cutoffs[mid] >= z:
+        return greatest_index_gtoreq(cutoffs,z,mid,max)
+    else:
+        return greatest_index_gtoreq(cutoffs,z,min,mid)
+    
+def build_ds(light,radius,region,strands):
+    # One day we will get rid of this check:
+    if 8.0*radius > light.z:
+        raise Exception('Haven\'t yet written code to handle large radii/low lights')
+    cuts = [c*light.z for c in [0.75,0.50,0.25]]
+    ds = [[]] + [(z,{}) for z in cuts]
+    cutoffs = [z-radius for z in cuts]
+    cutoffs.append(-radius)
+    for s in strands:
+        for point in s:
+            p = vector.fromList(point)
+            #at this point there should be code to exclude spheres that do not intersect
+            #the rectangular pyramid defined by the light and region
+            i = greatest_index_gtoreq(cutoffs,p.z)
+            if i == -1:
+                ds[0].append(p)
+            elif i == len(cutoffs)-1:   
+                pass
+            else:
+                i += 1
+                z = ds[i][0]
+                coords = coordinate_magick(light,p,z,radius)
+                try:
+                    ds[i][1][coords].append(p)
+                except KeyError:
+                    ds[i][1][coords] = [p]
+    return ds
+    
+def check_helper(light,z,dict,radius,sample_pt):
+    x,y = coordinate_magick(light,sample_pt,z,radius)
+    hit = False
+    for coords in [(x+dx,y+dy) for dx in [-1,0,1] for dy in [-1,0,1]]:
+        try:
+            for center in dict[coords]:
+                if check_inter_sphere(center,radius,light,sample_pt):
+                    return True
+        except KeyError:
+            pass
+    return False
     
 def main(infile, outfile):
     lights, radius, region, resolution, strands = parse_file(infile)
     x0,x1,y0,y1 = region
     imagex,imagey = resolution
+    intensity = int( 255.0 / float(len(lights)) )
+    print intensity
     
-    ims = [] #one image for each light
+    im = Image.new('L', (imagex, imagey), "white")
+    pix = im.load()
     
-    for light in lights:
-        im = Image.new('L', (imagex, imagey), "white")
-        pix = im.load()
-        for strand in strands:
-            for point in strand:
-                cast_shadow(pix, light, point, radius, region, resolution)
-        ims.append(im)
+    done = 0
+    for l in lights:
+        light = vector.fromList(l)
+        ds = build_ds(light,radius,region,strands)
+        for x in xrange(imagex):
+            s = x0 + (x1-x0)*(float(x)+0.5)/float(imagex)
+            for y in xrange(imagey):
+                t = y1 - (y1-y0)*(float(y)+0.5)/float(imagey)
+                sample_pt = vector(s,t,0.0)
+                hit = False
+                for center in ds[0]:
+                    if check_inter_sphere(center,radius,light,sample_pt):
+                        pix[x,y] -= intensity
+                        hit = True
+                        break
+                if hit:
+                    done += 1
+                    print done,x,y
+                    continue
+                for (z,dict) in ds[1:]:
+                    if check_helper(light,z,dict,radius,sample_pt):
+                        pix[x,y] -= intensity
+                        hit = True
+                        break
+                # if hit:
+                    # done += 1
+                    # print done
+                    # continue
+                
+                # for strand in strands:
+                    # for i in xrange(1,len(strand)):
+                        # c1 = vector.fromList(strand[i-1])
+                        # c2 = vector.fromList(strand[ i ])
+                        # if check_inter_cylinder(c1,c2,radius,light,sample_pt):
+                            # pix[x,y] -= intensity
+                            # hit = True
+                            # break
+                    # if hit:
+                        # break
+                done += 1
+                print done,x,y
     
-    if len(ims) != 0:
-        im = Image.new('L', (imagex, imagey), "white")
-        pix = im.load()
-        pixs = [i.load() for i in ims]
-        for x in xrange(0,imagex):
-            for y in xrange(0,imagey):
-                acc = 0
-                for p in pixs:
-                    acc += p[x,y]
-                pix[x,y] = int( float(acc)/float(len(ims)) )
-        im.save(outfile, 'JPEG', quality=95)
-    # ims[0].save(outfile, 'JPEG', quality=95)
+    im.save(outfile, 'JPEG', quality=95)
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
