@@ -31,8 +31,8 @@ def createTexDL(width, height, vertices):
   newList = glGenLists(1)
   glNewList(newList,GL_COMPILE);
   glBegin(GL_QUADS)
-  vertex = vertices[0]
 
+  vertex = vertices[0]
   # Bottom Left Of The Texture and Quad
   glTexCoord2f(0, 0)
   glVertex2f(vertex[0], vertex[1])
