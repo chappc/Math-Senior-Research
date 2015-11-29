@@ -184,26 +184,19 @@ def main(strandFile, shadowFile):
     # glRotatef(2, 1, 5, 3)
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_UP]:
-      if pressed[pygame.K_RIGHT]:
-        glRotatef(2, 1, -1, 0)
-      elif pressed[pygame.K_LEFT]:
-        glRotatef(2, 1, 1, 0)
-      else:
-        glRotatef(2, 1, 0, 0)
+      x = 1
     elif pressed[pygame.K_DOWN]:
-      if pressed[pygame.K_RIGHT]:
-        glRotatef(2, -1, -1, 0)
-      elif pressed[pygame.K_LEFT]:
-        glRotatef(2, -1, 1, 0)
-      else:
-        glRotatef(2, -1, 0, 0)
+      x = -1
     else:
-      if pressed[pygame.K_RIGHT]:
-        glRotatef(2, 0, 1, 0)
-      elif pressed[pygame.K_LEFT]:
-        glRotatef(2, 0, -1, 0)
-      else:
-        pass
+      x = 0
+    if pressed[pygame.K_RIGHT]:
+      y = -1
+    elif pressed[pygame.K_LEFT]:
+      y = 1
+    else:
+      y = 0
+    if x != 0 or y != 0:
+      glRotatef(2, x, y, 0)
       
     # Set object color
     glColor3fv((.1, .2, .3))
