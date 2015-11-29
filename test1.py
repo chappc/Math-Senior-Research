@@ -172,7 +172,6 @@ def main(strandFile, shadowFile):
 
   gluPerspective(20, (1.0*display[0]/display[1]), 0.1, 50.0)
   glTranslatef(0.0, 0.0, -10)
-  glEnable(GL_DEPTH_TEST)
   while True:
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
