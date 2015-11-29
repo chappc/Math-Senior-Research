@@ -181,7 +181,23 @@ def main(strandFile, shadowFile):
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
-    glRotatef(2, 1, 5, 3)
+    
+    pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_UP]:
+      x = 1
+    elif pressed[pygame.K_DOWN]:
+      x = -1
+    else:
+      x = 0
+    if pressed[pygame.K_RIGHT]:
+      y = -1
+    elif pressed[pygame.K_LEFT]:
+      y = 1
+    else:
+      y = 0
+    if x != 0 or y != 0:
+      glRotatef(2, x, y, 0)
+    
     # Set object color
     glColor3fv((.1, .2, .3))
     cube(quadric, edges, vertices, radius)
