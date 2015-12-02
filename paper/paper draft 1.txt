@@ -92,6 +92,12 @@ The motivation behind this method is that there is no step of merging the shadow
 
 The refinement that can be added is simplest to understand if we restrict ourselves temporarily to intersections with spheres. For each light source we imagine a pyramid with the region-of-interest of the shadow plane as its base and the light source as its vertex. We divide the pyramid into chunks and to each chunk associate all the spheres with a center near the chunk. When checking if a line segment inersects any sphere, we can ignore any sphere not in a chunk near the line segment. OK, but how do we organize this in practice? In our implementation, the pyramid is first divided into horizontal regions...
 
+[Mention inspiration from nearest neighbor algorithm]
+
+It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting "image" is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall.
+
+[mention cost in OpenGL implementation of building the mesh of the object surface]
+
 FUTURE WORK:
 
 What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
