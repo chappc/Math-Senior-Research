@@ -82,7 +82,9 @@ for each cylinder in cylinders:
 
 This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU.
 
-We did not implement casting the shadows of cylinders by this method, but there are a few optimizations that deserve mention. These result from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow.
+We did not implement casting the shadows of cylinders by this method, but there is an optimization that deserves mention. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders. In the typical case, the shadow of a cylinder would be treated as a quadrilateral. [need further explanation of the typical case]
+
+In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the newRayTracing branch of the git repository. 
 
 FUTURE WORK:
 

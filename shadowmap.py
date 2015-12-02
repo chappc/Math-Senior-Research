@@ -151,6 +151,9 @@ while True:
     
     depthMVP = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]).astype(np.float32)
     
+    # depthModelMatrix = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]).astype(np.float32)
+    # depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix
+    
     glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, depthMVP)
     
     glEnableVertexAttribArray(0)
