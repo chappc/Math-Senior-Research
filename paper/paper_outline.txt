@@ -5,7 +5,7 @@ contingency plan for the paper:
 		-and any important ideas/concepts developed
 		-How we represent Sculptures
 		-How we render shadows
-		-how we draw the sculpture in 3D
+		-how we draw the sculpture in 3D (also why: because we want to visualize output of the system)
 		-ideas for creating sculptures
 		-3D printing???
 	conclusion/future work

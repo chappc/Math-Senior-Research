@@ -1,0 +1,89 @@
+
+TITLE: Shadow Sculptures: Encrypting Images in 2-space with Objects in 3-space.
+
+ABSTRACT:
+
+This paper discusses the creation of three dimensional objects, given a shadow, a light source, and a wall, such that the object creates the shadow on the wall when placed under the light source. This problem was inspired by the artwork of Larry Kagan, a retired professor at RPI. The use of classical and real valued genetic algorithms to create these objects is demonstrated. A visualization tool is described that shows how the object would look as a finished product. We describe our respresentation of an object which is based on the techniques Kagan uses in his art. An efficient way to calculate the shadow cast by an object with this representation is required in order to evaluate fitness in the genetic algorithm. We describe our approach to shadow rendering. One component of fitness in the genetic algorithm is the fidelity of the cast shadow to the desired result. We use an industry standard algorithm which is often applied in image quality analysis to judge the quality of the shadows. Having described the means to evaluate the fitness of a candidate object, we proceed to explain the recombination techniques we used to create each generation of objects from the parent generation.
+
+INTRODUCTION:
+
+This paper addresses the proceedural generation of artwork, if such a thing is even possible. We wish to create art in the style of Larry Kagan, whose medium is metal and the shadows it casts. In a typical Kagan piece there is a metal object made from steel bars that have been bent to shape and welded together to form a whole. This assembly is mounted on a wall (painted white) and a spot light shines on it to cast a shadow on the wall that forms an image. In a naive sense, the problem  of creating something like Kagan's work is a very simple one: create a metal object in the shape of the desired shadow but scaled down by half, then mount this half way between the light source and the wall. The mounting can be done by means of straight bars that travel in the shadow from the rest of the object to the wall. But this is not the kind of result we desire. A major challenge of this project is determining the other factors that make a Kagan piece interesting beyond the mechanical fact that an image is present in the form of a shadow. In particular, the metal portion of a genuine Kagan is often visually chaotic and does not contain recognizable forms. (Exceptions to this are discussed in the section LARRY KAGAN's WORK.) Our approach to generating artwork in this style is therefore to use a genetic algorithm to search for a configuration of metal that meets a variety of conditions among which is the obvious requirement that the shadow appear as desired.
+
+Other components of fitness of the object in the genetic algorithm are its structural stability, its visual chaoticness, and its ability to be fabricated using techniques similar to what Kagan uses. We did not fully address structural stability in our research. Visual chaoticness is achieved by the random nature of the selection process. Fabricability is included because it adds another contraint in a problem that has few. It is was key consideration when we decided how to represent these sculptures.
+
+...
+
+LARRY KAGAN's WORK:
+
+In researching this problem we made a brief study of Kagan's work for several reasons. Firstly, we wanted to identify a subset of his work that might be most easily imitated. Secondly, our analysis shows how necessary this restriction is. Kagan's work is too varied for the whole body of work to be imitated. There is also the question of how Kagan selects the image he wishes to create from shadow. In all of our work we leave this crucial piece of creative heavy lifting to the experts: humans.
+
+Each of Larry Kagan's sculptures consists of a metal structure composed of bent rods of metal mounted to a wall and illuminated by a bright light from a carefully chosen location. The eye is drawn to the shadow produced this way, which forms a familiar image, while the rods themselves often have no obvious pattern. In the simplest case, the shadow image is a line drawing and the rods are attached to the wall at several points. For example, the piece "Frankfurt Chair" is like this. Kagan has created many variations on this idea including incorporating some of the bent rods in the recognizable image while most of the image is formed by the shadow, as seen in "Beach Chair". "Intersection of Two Circles" shows that a sculpture composed of rods can have a solid shadow with a geometric shape. [NOTE: It would be good to talk about the @ sign sculpture. It shows that the light source can be far off to one side of the sculpture.] Despite the fact that a single small bright light source is installed to cast the shadow for each sculpture, soft egdes of the shadow are noticeable in many of these works. In "Mosquito I", Kagan uses this effect in a dramatic way; the image present in the shadow of this sculpture is a mosquito with its own shadow cast by an imaginary light source. In order to make the distinction obvious, Kagan allowed soft shadow edges to show in the portion of the image corresponding to the imaginary shadow of the mosquito, but created the image of the mosquito with dark hard-edged shadows.
+
+HOW WE REPRESENT SCULTURES AND WHY:
+
+There are two different representations of sculptures used in this project. Both were chosen to make it likely that a sculpure that can be represented in our programs will be possible to make using techniques similar to Kagan's.
+
+The first representation is used when saving a sculpure as a digital file. These files can be given as input to the visualization system that is described later in this paper. The informal specification of this format can be found in the file 'ad file spec.txt' in the git repo submitted with this paper. The contents include three things that represent the sculpture: the position of the light source (actually a list of point sources, so we can simulate a diffuse source), the radius of the bar stock to use in constructing the sculpture and a list of 'strands'. Each strand is a list of points in 3D space, and as a space-filling shape it represents the union of spheres centered at each point and of cylinders with the centers of their end faces at consecutive points in the strand. The idea is that a strand approximates a smoothly bending piece of steel bar. One could construct the sculpture by making each strand from bar stock, then holding each strand in place and welding them together wherever they make contact.
+
+As you can see, this representation lends itself to checking whether the sculpture can be feasibly made or not. If any single strand cannot be made then the whole cannot. A strand might be impossible to make because it bends to sharply, or self intersects. The whole assembly might also fail to be fabricable if two strands intersect more than the small amount of intersection that would result from a weld. For comparison, one example of a representation that cannot be so easily checked for fabricability is a mesh of points on the surface of the sculpture. This representation does lend itself to calculating shadows however.
+
+The second representation that we use also makes use of the idea of spheres connected by cylinders. In fact, the representation is a simple graph with nodes representing the centers of spheres and edges representing cylinders connecting the centers of two spheres. This is the representation we propose using for the genetic algorithm. In comparison to the first representation there is a weaker guarantee that the sculpture is fabricable. Any sculpture having a representation of the first kind has a representation of this second kind simply by constructing a graph consisting of one path for each strand. Most of the time we cannot go in the opposite direction however. Sculputes with the second representation have a few additional risks for failure to be fabricable. [...]
+
+HOW WE RENDER SHADOWS:
+
+We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We also believe that a GPU based approach would be beneficial to the implementation of a genetic algorithm.
+
+The first method is partially implemented in the file 'rayTracing.py' on the branch 'master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
+
+input: l = position of light
+	   r = the radius of each sphere and cylinder
+	   spheres = a list of positions of centers of spheres
+	   cylinders = a list of pairs of positions specifying the end faces of the
+					cylinders
+output: pixels = array of black and white pixels indicating on which areas of the
+					wall light is incident
+
+initialize pixels to be uniformly white (illuminated)
+for each sphere in spheres:
+	if the sphere is entirely above the light or below the shadow plane:
+		it casts no shadow; continue to the next sphere
+	if the top of the sphere is beneath the light and the bottom is above the plane:
+		The shadow cast on the plane will be elliptical.
+		Calculate the equation of the cone whose vertex is the light source and which
+				is tangent to the sphere at a circle of points.
+		Find the equation of the ellipse by intersecting this cone with the shadow
+				plane.
+		The equation has the form A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0.
+		Rearrange the equation to have the form G(x)*y^2 + H(x)*y + I(x) = 0, where
+				G, H, and I are 2nd order or lower polynomials in x.
+		For each column c in the image:
+			Find the value of x that corresponds to c.
+			Calculate G(x), H(x), and I(x).
+			Solve the quadratic formula to find two values of y satisfying the
+					equation for the boundary of the ellipse.
+			Convert the values of y to row coordinates in the image.
+			In column c and all rows r between the two calculated:
+				color pixels[r][c] black
+	if the sphere intersects the shadow plane:
+		Handling this case is at least as complicated as handling a sphere strictly
+				above the plane.
+	if the sphere intersects the light:
+		color all of pixels black
+		return from proceedure
+	if the top of the sphere is above the light, its bottom below the light, without
+			intersecting it:
+		The shadow cast is hyperbolic.
+		This case is not handled by our code, but it would likely be similar to
+				the case of elliptical shadows.
+
+for each cylinder in cylinders:
+	//similar to the above but cylinders cast different shaped shadows
+	// ...
+
+This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU.
+
+We did not implement casting the shadows of cylinders by this method, but there are a few optimizations that deserve mention. These result from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow.
+
+FUTURE WORK:
+
+What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
