@@ -2,6 +2,7 @@ import Image
 import sys
 from math import sqrt
 from ADParser import parse_file
+from time import time
 
 # convert a point from floating point coordinates to image coordinates
 def convert_point(pt):
@@ -58,7 +59,13 @@ def main(infile, outfile):
     x0,x1,y0,y1 = region
     imagex,imagey = resolution
     
+    if not bool(lights):
+        print "No lights found in the input file."
+        quit()
+    
     ims = [] #one image for each light
+    
+    t1 = time()
     
     for light in lights:
         im = Image.new('L', (imagex, imagey), "white")
@@ -68,18 +75,27 @@ def main(infile, outfile):
                 cast_shadow(pix, light, point, radius, region, resolution)
         ims.append(im)
     
-    if len(ims) != 0:
-        im = Image.new('L', (imagex, imagey), "white")
-        pix = im.load()
-        pixs = [i.load() for i in ims]
-        for x in xrange(0,imagex):
-            for y in xrange(0,imagey):
-                acc = 0
-                for p in pixs:
-                    acc += p[x,y]
-                pix[x,y] = int( float(acc)/float(len(ims)) )
-        im.save(outfile, 'JPEG', quality=95)
-    # ims[0].save(outfile, 'JPEG', quality=95)
+    t2 = time()
+    
+    im = Image.new('L', (imagex, imagey), "white")
+    pix = im.load()
+    pixs = [i.load() for i in ims]
+    for x in xrange(0,imagex):
+        for y in xrange(0,imagey):
+            acc = 0
+            for p in pixs:
+                acc += p[x,y]
+            pix[x,y] = int( float(acc)/float(len(ims)) )
+            
+    t3 = time()
+    
+    im.save(outfile, 'JPEG', quality=95)
+    
+    t4 = time()
+    
+    print 'It took',t2-t1,'seconds to draw the shadows for individual lights.'
+    print 'It took',t3-t2,'seconds to merge the shadows.'
+    print 'It took',t4-t3,'seconds to save the image.'
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
