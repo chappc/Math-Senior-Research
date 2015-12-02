@@ -101,4 +101,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print 'usage: python ray-tracing2.py <infile> <outfile>'
         sys.exit(2)
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2].strip())
