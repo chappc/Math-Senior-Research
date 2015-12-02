@@ -29,6 +29,20 @@ As you can see, this representation lends itself to checking whether the sculptu
 
 The second representation that we use also makes use of the idea of spheres connected by cylinders. In fact, the representation is a simple graph with nodes representing the centers of spheres and edges representing cylinders connecting the centers of two spheres. This is the representation we propose using for the genetic algorithm. In comparison to the first representation there is a weaker guarantee that the sculpture is fabricable. Any sculpture having a representation of the first kind has a representation of this second kind simply by constructing a graph consisting of one path for each strand. Most of the time we cannot go in the opposite direction however. Sculputes with the second representation have a few additional risks for failure to be fabricable. [...]
 
+HOW WE RENDER SCULPTURES:
+
+intro 
+- current model
+  - opengl
+  - spheres and cylinders model
+  - import shadow from external source
+  - backdrop using GL_TEXTURE2D
+- possible other models:
+  - unity?
+  - opengl 3.3+, using fragment shaders
+  
+
+
 HOW WE RENDER SHADOWS:
 
 We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We also believe that a GPU based approach would be beneficial to the implementation of a genetic algorithm.
@@ -97,6 +111,11 @@ The refinement that can be added is simplest to understand if we restrict oursel
 It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting "image" is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall.
 
 [mention cost in OpenGL implementation of building the mesh of the object surface]
+
+GENETIC ALGORITHMS SOLUTIONS:
+using genetic algorithm for creating "abstract" data that fits a given shadow.
+- methods
+  - 
 
 FUTURE WORK:
 
