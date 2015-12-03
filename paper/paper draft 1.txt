@@ -120,3 +120,5 @@ using genetic algorithm for creating "abstract" data that fits a given shadow.
 FUTURE WORK:
 
 What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
+
+How can the partitioning of space in the second rendering method be improved to allow faster shadow drawing? More equally sized partitions? Adaptively sized partitions?
