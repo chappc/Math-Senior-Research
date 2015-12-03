@@ -1,5 +1,5 @@
 
-TITLE: Shadow Sculptures: Encrypting Images in 2-space with Objects in 3-space.
+TITLE: Tools and Ideas for the Proceedural Generation of Shadow Sculptures.
 
 ABSTRACT:
 
