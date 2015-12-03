@@ -49,7 +49,7 @@ intro
 
 HOW WE RENDER SHADOWS:
 
-We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We also believe that a GPU based approach would be beneficial to the implementation of a genetic algorithm.
+We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We believe that the increased speed of a GPU-based approach would be beneficial to the implementation of a genetic algorithm.
 
 The first method is partially implemented in the file 'rayTracing.py' on the branch 'master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
