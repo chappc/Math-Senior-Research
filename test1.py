@@ -171,7 +171,7 @@ def main(strandFile, shadowFile):
   texData, width, height = loadImage(shadowFile)
 
   gluPerspective(20, (1.0*display[0]/display[1]), 0.1, 50.0)
-  glTranslatef(0.0, 0.0, -10)
+  glTranslatef(-1.5, 0.0, -10)
   while True:
     for event in pygame.event.get():
       if event.type == pygame.QUIT:

@@ -35,16 +35,11 @@ Since any sculpture having a representation of the first kind has a representati
 
 HOW WE RENDER SCULPTURES:
 
-intro 
-- current model
-  - opengl
-  - spheres and cylinders model
-  - import shadow from external source
-  - backdrop using GL_TEXTURE2D
-- possible other models:
-  - unity?
-  - opengl 3.3+, using fragment shaders
-  
+Using the method of spheres and cylinders, objects can be graphically modeled and displayed in 3D rendering systems fairly easily.  One method of doing this that we tested was using OpenGL to build a little engine that could render the object and a small surface such that the object and the shadow could be viewed from multiple angles, as it would look if it were printed.  The shadow could be imported as a texture, using OpenGL's GL_TEXTURE2D object, and then fitted to the surface that would compose the wall.  This would allow modularity and would separate the methods that composed the creation of the shadow and its rendering.  While this may not be optimal, it is the most easily supported method using OpenGL legacy code.
+
+For a more updated model that could possibly fix both the issue of slow shadow rendering time and separation of the shadow rendering from the object's rendering, one may instead of legacy OpenGL use OpenGL 3.3 or above, which adds the use of fragment shaders, and can render shadows from point light sources fairly easily.  The question that arises in this method, however, is how one would compare two shadows to determine accuracy and fitness of an object.  This would require further research and testing.
+
+There are many video game engines that have builtin methods for shadow generation, with many options and customizable settings for doing so.  This may be the simplest option for rendering objects, and possibly even would also allow for comparison and heuristic generation.  Such engines would include Unity, Unreal Engine, and Source 2, just to name a few.  As our knowledge did not extend to the realm of writing video games, we felt more comfortable working with OpenGL.
 
 
 HOW WE RENDER SHADOWS:
@@ -123,15 +118,25 @@ The refinement that can be added is simplest to understand if we restrict oursel
 
 [Mention inspiration from nearest neighbor algorithm]
 
+
 It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting "image" is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall.
 
 [mention cost in OpenGL implementation of building the mesh of the object surface]
 
-GENETIC ALGORITHMS SOLUTIONS:
-using genetic algorithm for creating "abstract" data that fits a given shadow.
-- methods
-  - 
+GENETIC ALGORITHM SOLUTIONS:
 
+We believe approximate solutions to the forward problem may be possible using genetic algorithms for creating "abstract" data that fits a given shadow.  The question then becomes how to represent data for each possible solution to the problem in a genome that allows simple crossovers and mutations.  Some possible representations are as follows: 
+- methods
+  - Using arrays of floats or integers to represent coordinate positions of nodes
+    - The simplest method of representing nodes and edges would be to keep the number of both constant, moving the nodes around while retaining the same edge mappings for all genomes.  This way, one could represent each node as an unsigned integer, or an array of three unsigned integers representing the positive incremental distance from some origin point.  Given the nature of the problem, one can disregard any space not within the projection from the light source to a given section of the wall.  This allows the bounding of the entire system in a cube, which we can use to define our 0 and our MAX_INT for each coordinate direction.  Next, we would create an array of unsigned integers, of length 3 times the number of nodes in the system.  This would be the genome for the genetic algorithm.  The fitness function would be defined as the number of matching pixels (within a certain threshold) between the input and the generated shadow using one of the methods above.
+  - Using adjacency matrices to represent edges
+  - Using a fixed edge mapping to reduce complexity
+  - Using "smart" methods of combining genetic data
+- mutations
+  - swapping nodes
+  - scrambling node data
+  - changing edges
+  
 FUTURE WORK:
 
 What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
