@@ -105,9 +105,9 @@ for each cylinder in cylinders:
 	// ...
 	This case is not handled by our code.
 
-This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU, or perhaps with single instruction multiple data technologies like SSE and AVX.
+This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds for our python implementation. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU, or perhaps with single instruction multiple data technologies like SSE and AVX.
 
-We did not implement casting the shadows of cylinders by this method, but there is an optimization that deserves mention. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders. [Explain the further optimization...]
+We did not implement casting the shadows of cylinders by this method, but there is an optimization that deserves mention. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders. Furthermore, even when the cylinder is not aligned this way we can skip drawing the portion of the shadow that results from the end faces, for the same reason.
 
 In the typical case, the shadow of a cylinder would be treated as a quadrilateral. [need further explanation of the typical case]
 
@@ -136,6 +136,6 @@ What is the best way to use point sources to simulate a diffuse light source? Is
 
 How can the partitioning of space in the second rendering method be improved to allow faster shadow drawing? More equally sized partitions? Adaptively sized partitions?
 
-The inverse square law is not respected by our shadow drawing algorithms. (Does this Include the OpenGL one?) Can this law be incorporated into our algorithms? Is it even necessary to include this or does the human visual system ignore this variation in brightness?
+The inverse square law is not respected by our shadow drawing algorithms. (Does this Include the OpenGL one?) Can this law be incorporated into our algorithms? Is it even necessary to include this or does the human visual system ignore this variation in brightness? Mention the image processing technique histogram equalization.
 
 The visualization tool lacks the ability to draw shadows cast on the object by itself. These shadows are not an important component of Kagan's art as far as we can tell.
