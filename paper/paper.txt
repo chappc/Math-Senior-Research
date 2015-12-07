@@ -110,9 +110,9 @@ Furthermore, even when the cylinder is not aligned this way we can skip drawing 
 
 In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the newRayTracing branch of the git repository. This second method is a refinement of the following naive method:
 
-Suppose you have a pair of proceedures that are used to efficiently check whether a line segment intersects a sphere or a cylinder. You can iterate over the lights, and over all the pixels in the image, and draw a line segment from the light to the center of the pixel. Then go through all the spheres and cylinders checking for an intersection. At the first intersection, the light intensity at the pixel is decremented and we move on to the next pair of a light and a pixel.
+Suppose you have a pair of proceedures that are used to efficiently check whether a line segment intersects a sphere or a cylinder. You can iterate over the lights, and over all the pixels in the image, and construct the line segment from the light to the center of the pixel. Then go through all the spheres and cylinders checking for an intersection. At the first intersection, the light intensity at the pixel is decremented and we move on to the next pair of a light and a pixel. The motivation behind this method is that there is no step of merging the shadow of each point light source. [Consider writing out pseudo code for this.]
 
-The motivation behind this method is that there is no step of merging the shadow of each point light source.
+The innermost loop (over all spheres and cylinders) can be accelerated by use of a space partitioning method.
 
 The refinement that can be added is simplest to understand if we restrict ourselves temporarily to intersections with spheres. For each light source we imagine a pyramid with the region-of-interest of the shadow plane as its base and the light source as its vertex. We divide the pyramid into chunks and to each chunk associate all the spheres with a center near the chunk. When checking if a line segment inersects any sphere, we can ignore any sphere not in a chunk near the line segment. OK, but how do we organize this in practice? In our implementation, the pyramid is first divided into horizontal regions...
 
