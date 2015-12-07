@@ -68,8 +68,8 @@ for each sphere in spheres:
 		it casts no shadow; continue to the next sphere
 	if the top of the sphere is beneath the light and the bottom is above the plane:
 		The shadow cast on the plane will be elliptical.
-		Calculate the equation of the cone whose vertex is the light source and which
-				is tangent to the sphere at a circle of points.
+		Calculate the equation of the cone formed by all lines passing through the
+				light source and tangent to the sphere.
 		Find the equation of the ellipse by intersecting this cone with the shadow
 				plane.
 		The equation has the form A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0.
