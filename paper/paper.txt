@@ -151,6 +151,6 @@ The visualization tool lacks the ability to draw shadows cast on the object by i
 
 Is it a good idea to combine the two cpu-based shadow-rendering techniques? For example, use the second method to draw spheres and the first to draw cylinders?
 
-Appendix A:
+APPENDIX A:
 
-[Run through the derivation of the sphere shadow math.]
+In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the z=0 plane. On the z-axis the sphere is strictly between the light and the plane. We are given the location of the 
