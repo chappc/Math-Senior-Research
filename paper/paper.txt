@@ -158,8 +158,9 @@ In this appendix we will show in detail the calculation of the boundary of a sha
 
 The first step is to derive the equation of the shadow cone. A generic point on the cone will be denoted by $\vec{x}$. The axis of the cone passes through $\vec{l}$ and through $\vec{c}$. The defining property of a point $\vec{x}$ is 
 
-$\|proj_{\vec{p}-\vec{l}} \vec{x}\| = \|orth_{\vec{p}-\vec{l}} \vec{x}\|c$
+$\|orth_{\vec{c}-\vec{l}} (\vec{x} - \vec{c})\| = \|proj_{\vec{c}-\vec{l}} (\vec{x} - \vec{c})\| c$  (1)
 
-where c is a constant characteristic of the aperture of the cone. 
+where $c$ is a constant characteristic of the aperture of the cone. Equation 1 says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $c$ can be calculated from any point on the cone. We will calculate $c$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone. The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency. 
 
+As shown in [insert reference to a figure], a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$
 
