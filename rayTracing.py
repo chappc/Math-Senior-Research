@@ -6,14 +6,17 @@ from time import time
 
 # convert a point from floating point coordinates to image coordinates
 def convert_point(pt):
-    x = int( (pt[0] - x0)*imagex/(x1-x0) )
-    y = int( (y1 - pt[1])*imagey/(y1-y0) )
+    x = int(round( (pt[0] - x0)*imagex/(x1-x0) ))
+    y = int(round( (y1 - pt[1])*imagey/(y1-y0) ))
     if 0 <= x < imagex and 0 <= y < imagey:
         return (x,y)
     else:
         return None
 
-def cast_shadow(pix, light, point, radius, region, resolution):
+def cast_shadow_cylinder(pix, light, point1, point2, radius, region, resolution):
+    pass
+
+def cast_shadow_sphere(pix, light, point, radius, region, resolution):
     x0,x1,y0,y1 = region
     imagex,imagey = resolution
     if point[2]+radius >= light[2]: #this is the case where a hyperbolic shadow
@@ -72,7 +75,11 @@ def main(infile, outfile):
         pix = im.load()
         for strand in strands:
             for point in strand:
-                cast_shadow(pix, light, point, radius, region, resolution)
+                cast_shadow_sphere(pix, light, point, radius, region, resolution)
+            for i in xrange(len(strand)-1):
+                point1 = strand[i]
+                point2 = strand[i+1]
+                cast_shadow_cylinder(pix, light, point1, point2, radius, region, resolution)
         ims.append(im)
     
     t2 = time()
