@@ -154,4 +154,12 @@ Is it a good idea to combine the two cpu-based shadow-rendering techniques? For 
 
 APPENDIX A:
 
-In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the z=0 plane. On the z-axis the sphere is strictly between the light and the plane. We are given the location of the 
+In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the z=0 plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
+
+The first step is to derive the equation of the shadow cone. A generic point on the cone will be denoted by $\vec{x}$. The axis of the cone passes through $\vec{l}$ and through $\vec{c}$. The defining property of a point $\vec{x}$ is 
+
+$\|proj_{\vec{p}-\vec{l}} \vec{x}\| = \|orth_{\vec{p}-\vec{l}} \vec{x}\|c$
+
+where c is a constant characteristic of the aperture of the cone. 
+
+
