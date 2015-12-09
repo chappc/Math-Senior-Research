@@ -1,6 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[toc,page]{appendix}
+\usepackage{amsmath, amsthm, amssymb}
 
 %opening
 \title{Tools and Ideas for the Proceedural Generation of Shadow Sculptures.}
@@ -226,15 +227,35 @@ Is it a good idea to combine the two cpu-based shadow-rendering techniques? For 
 \begin{appendices}
 \chapter{A} \label{a}
 
-In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the z=0 plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
+In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the $z=0$ plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
 
 The first step is to derive the equation of the shadow cone. A generic point on the cone will be denoted by $\vec{x}$. The axis of the cone passes through $\vec{l}$ and through $\vec{c}$. The defining property of $\vec{x}$ is 
 \begin{equation}\label{xproperty}
 \|orth_{\vec{c}-\vec{l}} (\vec{x} - \vec{l})\| = \|proj_{\vec{c}-\vec{l}} (\vec{x} - \vec{l})\| \cdot k
 \end{equation}
-where $k$ is a constant characteristic of the aperture of the cone. Equation $(\ref{xproperty})$ says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $k$ can be calculated from any point on the cone. We will calculate $k$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone.
+where $k$ is a constant characteristic of the aperture of the cone. Equation (\ref{xproperty}) says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $k$ can be calculated from any point on the cone. We will calculate $k$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone.
 
-The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency. Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$.
+The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency (figure [reference to "sphere shadow figure 1.png"]). Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$. In figure [reference to "sphere shadow figure 2.png"] the triangle formed by the projection and orthogonal projection of $\vec{p}-\vec{l}$ onto $\vec{c}-\vec{l}$ is shown with the triangle formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$. The triangles are similar because they share two congruent angles. Thus their sides have the same proportions. In particular:
+\[
+k = {\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|\over \|proj_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|} = {r'\over L''} = {r\over L'} = {r\over\sqrt{L^2-r^2}}
+\]
+Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{xproperty}).
+\begin{align*}
+proj_{\vec{u}} \vec{v} = \vec{u} {\vec{u}\cdot\vec{v}\over \vec{u}\cdot\vec{u}}\\
+orth_{\vec{u}} \vec{v} = \vec{v} - proj_{\vec{u}} \vec{v}
+\end{align*}
+Start by squaring both sides of \ref{xproperty} and substituting. Let $\vec{d} = \vec{c}-\vec{l}$, $y = \vec{x}-\vec{l}$.
+\begin{align*}
+\|\vec{y} - \vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}\|^2 = \|\vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}\|^2 \cdot k^2\\
+\vec{y}\cdot\vec{y}-2\vec{y}\cdot\vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}+\vec{d}\cdot\vec{d}({\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}})^2 = (\vec{d}\cdot\vec{d}) ({\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}})^2 \cdot k^2
+\end{align*}
+Multiply each side by $\vec{d}\cdot\vec{d}$:
+\begin{align*}
+(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-2(\vec{d}\cdot\vec{y})^2+(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2\\
+(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2
+\end{align*}
+Now we find the intersection of this cone with the $z=0$ plane.
+
 \end{appendices}
 
 \end{document}
