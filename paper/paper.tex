@@ -2,6 +2,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[toc,page]{appendix}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
 
 %opening
 \title{Tools and Ideas for the Proceedural Generation of Shadow Sculptures.}
@@ -235,10 +238,27 @@ The first step is to derive the equation of the shadow cone. A generic point on 
 \end{equation}
 where $k$ is a constant characteristic of the aperture of the cone. Equation (\ref{xproperty}) says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $k$ can be calculated from any point on the cone. We will calculate $k$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone.
 
-The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency (figure [reference to "sphere shadow figure 1.png"]). Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$. In figure [reference to "sphere shadow figure 2.png"] the triangle formed by the projection and orthogonal projection of $\vec{p}-\vec{l}$ onto $\vec{c}-\vec{l}$ is shown with the triangle formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$. The triangles are similar because they share two congruent angles. Thus their sides have the same proportions. In particular:
+The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency (see figure \ref{fig:shadow_1}). Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$. In figure \ref{fig:shadow_2} the triangle formed by the projection and orthogonal projection of $\vec{p}-\vec{l}$ onto $\vec{c}-\vec{l}$ is shown with the triangle formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$. The triangles are similar because they share two congruent angles. Thus their sides have the same proportions. In particular:
 \[
 k = {\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|\over \|proj_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|} = {r'\over L''} = {r\over L'} = {r\over\sqrt{L^2-r^2}}
 \]
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.8\textwidth]{sphere_shadow_figure_1.png}
+    \caption{Awesome Image}
+    \label{fig:shadow_1}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.8\textwidth]{sphere_shadow_figure_2.png}
+    \caption{Awesome Image}
+    \label{fig:shadow_2}
+\end{figure}
+
+%\includegraphics[scale=0.60]{sphere_shadow_figure_2}
+
 Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{xproperty}).
 \begin{align*}
 proj_{\vec{u}} \vec{v} = \vec{u} {\vec{u}\cdot\vec{v}\over \vec{u}\cdot\vec{u}}\\
