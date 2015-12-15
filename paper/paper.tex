@@ -1,4 +1,4 @@
-\documentclass[letter,10pt]{article}
+\documentclass[10pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[toc,page]{appendix}
 \usepackage{amsmath, amsthm, amssymb}
@@ -240,34 +240,32 @@ where $k$ is a constant characteristic of the aperture of the cone. Equation (\r
 
 The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency (see figure \ref{fig:shadow_1}). Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$. In figure \ref{fig:shadow_2} the triangle formed by the projection and orthogonal projection of $\vec{p}-\vec{l}$ onto $\vec{c}-\vec{l}$ is shown with the triangle formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$. The triangles are similar because they share two congruent angles. Thus their sides have the same proportions. In particular:
 \[
-k = {\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|\over \|proj_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|} = {r'\over L''} = {r\over L'} = {r\over\sqrt{L^2-r^2}}
+k = \frac{\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|}{\|proj_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|} = \frac{r'}{L''} = \frac{r}{L'} = \frac{r}{\sqrt{L^2-r^2}}
 \]
 
-\begin{figure}[h]
+\begin{figure}[h]\label{fig:shadow_1}
     \centering
     \includegraphics[width=0.8\textwidth]{sphere_shadow_figure_1.png}
     \caption{Depicted is the light source, a sphere, and a ray of light tangent to the sphere (labeled as generatrix of cone).}
-    \label{fig:shadow_1}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h]\label{fig:shadow_2}
     \centering
     \includegraphics[width=0.8\textwidth]{sphere_shadow_figure_2.png}
     \caption{This figure includes in addition the orthogonal projection from the point of tangency to the axis of the cone. The distance $L''$ is from the light source to the tip of the projection vector.}
-    \label{fig:shadow_2}
 \end{figure}
 
 %\includegraphics[scale=0.60]{sphere_shadow_figure_2}
 
 Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{xproperty}).
 \begin{align*}
-proj_{\vec{u}} \vec{v} = \vec{u} {\vec{u}\cdot\vec{v}\over \vec{u}\cdot\vec{u}}\\
+proj_{\vec{u}} \vec{v} = \vec{u} \frac{\vec{u}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\\
 orth_{\vec{u}} \vec{v} = \vec{v} - proj_{\vec{u}} \vec{v}
 \end{align*}
 Start by squaring both sides of \ref{xproperty} and substituting. Let $\vec{d} = \vec{c}-\vec{l}$, $y = \vec{x}-\vec{l}$.
 \begin{align*}
-\|\vec{y} - \vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}\|^2 = \|\vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}\|^2 \cdot k^2\\
-\vec{y}\cdot\vec{y}-2\vec{y}\cdot\vec{d} {\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}}+\vec{d}\cdot\vec{d}({\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}})^2 = (\vec{d}\cdot\vec{d}) ({\vec{d}\cdot\vec{y}\over \vec{d}\cdot\vec{d}})^2 \cdot k^2
+\|\vec{y} - \vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}\|^2 = \|\vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}\|^2 \cdot k^2\\
+\vec{y}\cdot\vec{y}-2\vec{y}\cdot\vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}+\vec{d}\cdot\vec{d}(\frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}})^2 = (\vec{d}\cdot\vec{d}) (\frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}})^2 \cdot k^2
 \end{align*}
 Multiply each side by $\vec{d}\cdot\vec{d}$:
 \begin{align*}
