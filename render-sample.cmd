@@ -1,3 +1,3 @@
-python make-art-description.py
+python makeArtDescription.py
 python rayTracing.py art-description.ad art-description-shadow.jpeg
-python test1.py art-description.ad art-description-shadow.jpeg
+python renderObject.py art-description.ad art-description-shadow.jpeg
