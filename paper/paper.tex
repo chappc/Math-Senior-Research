@@ -139,7 +139,7 @@ There are many video game engines that have builtin methods for shadow generatio
 \section{How We Render Shadows}
 We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We believe that the increased speed of a GPU-based approach would be beneficial to the implementation of a genetic algorithm.
 
-The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository \cite{gitrepo}. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
+The first method is partially implemented in the file \texttt{rayTracing.py} on the branch \texttt{master} in the submitted git repository \cite{gitrepo}. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
 \begin{alltt}
 input: \(\vec{l}\) = position of light
@@ -202,7 +202,7 @@ Furthermore, even when the cylinder is not aligned this way we can skip drawing 
 
 Appendix \ref{app:ellipse_derivation} presents a derivation of the equation of the elliptical boundary of the shadow of a sphere in the most typical case.
 
-In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the newRayTracing branch of the git repository. This second method is a refinement of the following naive method:
+In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the \texttt{newRayTracing} branch of the git repository in the file \texttt{rayTracing.py}. This second method is a refinement of the following naive method:
 
 Suppose you have a pair of proceedures that are used to efficiently check whether a line segment intersects a sphere or a cylinder. You can iterate over the lights, and over all the pixels in the image, and construct the line segment from the light to the center of the pixel. Then go through all the spheres and cylinders checking for an intersection. At the first intersection, the light intensity at the pixel is decremented and we move on to the next pair of a light and a pixel. The motivation behind this method is that there is no step of merging the shadow of each point light source. [Consider writing out pseudo code for this.]
 
