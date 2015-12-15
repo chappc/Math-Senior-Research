@@ -138,8 +138,19 @@ We investigated two CPU based ways to render the shadows of objects with a repre
 The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
 \begin{alltt}
-for each sphere in spheres:
-  if the sphere is entirely above the light or below the shadow plane:
+input: \(\vec{l}\) = position of light
+       \(r\) = the radius of each sphere and cylinder
+       \(spheres\) = a list of positions of centers of spheres
+       \(cylinders\) = a list of pairs of positions specifying the end
+              faces of the cylinders
+output: \(pixels\) = array of black and white pixels indicating on
+              which areas of the wall light is incident
+
+initialize \(pixels\) to be uniformly white (illuminated)
+
+for each \(sphere\) in \(spheres\):
+  if the sphere is entirely above the light or below the shadow
+        plane:
     it casts no shadow; continue to the next sphere
   if the top of the sphere is beneath the light and the bottom is above the plane:
     The shadow cast on the plane will be elliptical.
@@ -147,9 +158,9 @@ for each sphere in spheres:
         light source and tangent to the sphere.
     Find the equation of the ellipse by intersecting this cone with the shadow
         plane.
-    The equation has the form A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0.
-    Rearrange the equation to have the form G(x)*y^2 + H(x)*y + I(x) = 0, where
-        G, H, and I are 2nd order or lower polynomials in x.
+    The equation has the form \(A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0\).
+    Rearrange the equation to have the form \(G(x)*y^2 + H(x)*y + I(x) = 0\), where
+        \(G\), \(H\), and \(I\) are 2nd order or lower polynomials in x.
     For each column c in pixels:
       Find the value of x that corresponds to c.
       Calculate G(x), H(x), and I(x).
