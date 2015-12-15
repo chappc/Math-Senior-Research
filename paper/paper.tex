@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
 \usepackage{breqn}
-\usepackage[]{algorithm2e}
+\usepackage{alltt}
 
 
 %opening
@@ -129,73 +129,45 @@ We investigated two CPU based ways to render the shadows of objects with a repre
 
 The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
-\begin{dmath*}
-\vec{l} = position of light\\
-\vec{r} = the radius of each sphere and cylinder\\
-spheres = a list of positions of centers of spheres\\
-cylinders = a list of pairs of positions specifying the end faces of the cylinders
-\end{dmath*}
-
-\begin{algorithm}[H]
-\DontPrintSemicolon
- \KwData{$\vec{l}$ = position of light, $\vec{r}$ = the radius of each sphere and cylinder, $spheres$ = a list of positions of centers of spheres, $cylinders$ = a list of pairs of positions specifying the end faces of the cylinders}
- \KwResult{$pixels$ = array of black and white pixels indicating on which areas of the wall light is incident}
- $pixels \leftarrow$ a uniformly white (illuminated) image of the desired size\;
- \For{each sphere in spheres}{
-  read current\;
-  \eIf{understand}{
-   go to next section\;
-   current section becomes this one\;
-   }{
-   go back to the beginning of current section\;
-  }
- }
- \For{each cylinder in cylinders}{
-  \tcp*[h]{similar to the above but cylinders cast different}
-  \tcp*[h]{shaped shadows}\\
-  \tcp*[h]{This case is not handled by our code.}
- }
- \caption{first shadow rendering method}
-\end{algorithm}
-
-
-
+\begin{alltt}
 for each sphere in spheres:
-	if the sphere is entirely above the light or below the shadow plane:
-		it casts no shadow; continue to the next sphere
-	if the top of the sphere is beneath the light and the bottom is above the plane:
-		The shadow cast on the plane will be elliptical.
-		Calculate the equation of the cone formed by all lines passing through the
-				light source and tangent to the sphere.
-		Find the equation of the ellipse by intersecting this cone with the shadow
-				plane.
-		The equation has the form $A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0$.
-		Rearrange the equation to have the form $G(x)*y^2 + H(x)*y + I(x) = 0$, where
-				$G$, $H$, and $I$ are 2nd order or lower polynomials in $x$.
-		For each column $c$ in pixels:
-			Find the value of $x$ that corresponds to $c$.
-			Calculate $G(x)$, $H(x)$, and $I(x)$.
-			Use the quadratic formula to find two values of $y$ satisfying the
-					equation for the boundary of the ellipse.
-			Convert the values of y to row coordinates in the image.
-			In column $c$ and all rows $r$ between the two calculated:
-				color pixels[r][c] black
-	if the sphere intersects the shadow plane:
-		Handling this case is at least as complicated as handling a sphere strictly
-				above the plane.
-		The circular intersection of the circle and the plane is shadowed.
-		Any additional shadowing is a subset of the elliptical shadow described in
-				the previous case.
-		This case is not handled by our code.
-	if the sphere intersects the light:
-		Color all of pixels black.
-		Return from the proceedure early.
-		This case is not handled by our code.
-	if the top of the sphere is above the light, its bottom below the light, without
-			intersecting it:
-		The shadow cast is hyperbolic.
-		This case is not handled by our code, but it would likely be similar to
-				the case of elliptical shadows.
+  if the sphere is entirely above the light or below the shadow plane:
+    it casts no shadow; continue to the next sphere
+  if the top of the sphere is beneath the light and the bottom is above the plane:
+    The shadow cast on the plane will be elliptical.
+    Calculate the equation of the cone formed by all lines passing through the
+        light source and tangent to the sphere.
+    Find the equation of the ellipse by intersecting this cone with the shadow
+        plane.
+    The equation has the form A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0$.
+    Rearrange the equation to have the form $G(x)*y^2 + H(x)*y + I(x) = 0$, where
+        \(G\), \(H$, and \(I\) are 2nd order or lower polynomials in \(x\).
+    For each column \(c\) in pixels:
+      Find the value of \(x\) that corresponds to \(c\).
+      Calculate \(G(x)\), \(H(x)\), and \(I(x)\).
+      Use the quadratic formula to find two values of \(y\) satisfying the
+          equation for the boundary of the ellipse.
+      Convert the values of y to row coordinates in the image.
+      In column \(c\) and all rows \(r\) between the two calculated:
+        color pixels[r][c] black
+  if the sphere intersects the shadow plane:
+    Handling this case is at least as complicated as handling a sphere strictly
+        above the plane.
+    The circular intersection of the circle and the plane is shadowed.
+    Any additional shadowing is a subset of the elliptical shadow described in
+        the previous case.
+    This case is not handled by our code.
+  if the sphere intersects the light:
+    Color all of pixels black.
+    Return from the proceedure early.
+    This case is not handled by our code.
+  if the top of the sphere is above the light, its bottom below the light, without
+      intersecting it:
+    The shadow cast is hyperbolic.
+    This case is not handled by our code, but it would likely be similar to
+        the case of elliptical shadows.
+
+\end{alltt}
 
 This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds for our python implementation. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU, or perhaps with single instruction multiple data technologies like SSE and AVX.
 
