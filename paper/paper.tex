@@ -139,7 +139,7 @@ There are many video game engines that have builtin methods for shadow generatio
 \section{How We Render Shadows}
 We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We believe that the increased speed of a GPU-based approach would be beneficial to the implementation of a genetic algorithm.
 
-The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
+The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository \cite{gitrepo}. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
 \begin{alltt}
 input: \(\vec{l}\) = position of light
@@ -200,7 +200,7 @@ We did not implement casting the shadows of cylinders by this method, but there 
 
 Furthermore, even when the cylinder is not aligned this way we can skip drawing the portion of the shadow that results from the end faces, for the same reason. In this case, the shadow drawn for a cylinder would be a quadrilateral. Imagine two planes, each of which is tangent to the circular wall of the cylinder and passes through the point light source. They are tangent on opposite sides of the cylinder. Each plane has an intersection point with each circular face of the cylinder. The four such intersection points are co-planer, and the quadrilateral they form is entirely inside the cylinder. The shadow of this quadrilateral is thus a part of the shadow of the cylinder. The remaining part of the cylinder's shadow should also be shadowed by the spheres.
 
-Appendix \ref{a} presents a derivation of the equation of the elliptical boundary of the shadow of a sphere in the most typical case.
+Appendix \ref{app:ellipse_derivation} presents a derivation of the equation of the elliptical boundary of the shadow of a sphere in the most typical case.
 
 In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the newRayTracing branch of the git repository. This second method is a refinement of the following naive method:
 
@@ -244,7 +244,7 @@ Is it a good idea to combine the two cpu-based shadow-rendering techniques? For 
 We should use bresenham's algorithm to draw an ellipse once we have its parameters, instead of the naive method we use now.
 
 \begin{appendices}
-\chapter{A} \label{a}
+\section{A} \label{app:ellipse_derivation}
 
 In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the $z=0$ plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
 
