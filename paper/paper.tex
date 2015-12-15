@@ -274,7 +274,17 @@ Multiply each side by $\vec{d}\cdot\vec{d}$:
 (\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-2(\vec{d}\cdot\vec{y})^2+(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2\\
 (\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2
 \end{align*}
-Now we find the intersection of this cone with the $z=0$ plane.
+Divide both sides by $k^2$ and substitute $k^2 = r^2 / ( L^2-r^2)$.
+\begin{align*}
+((\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{y})^2)\cdot ( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2\\
+(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2(1 + ( L^2-r^2)/r^2)\\
+(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2 L^2/r^2
+\end{align*}
+The quantities $\vec{d}\cdot\vec{d}$ and $L^2$ are equal (see figure \ref{fig:shadow_1}).
+\[
+(\vec{y}\cdot\vec{y})( L^2-r^2) =  (\vec{d}\cdot\vec{y})^2
+\]
+Now we find the intersection of this cone with the $z=0$ plane. The condition for intersection is that the third component of $\vec{x}$ be $0$.
 
 \end{appendices}
 
