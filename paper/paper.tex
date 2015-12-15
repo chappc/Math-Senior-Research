@@ -142,16 +142,14 @@ The first method is partially implemented in the file `rayTracing.py' on the bra
 input: \(\vec{l}\) = position of light
        \(r\) = the radius of each sphere and cylinder
        \(spheres\) = a list of positions of centers of spheres
-       \(cylinders\) = a list of pairs of positions specifying the end
-              faces of the cylinders
-output: \(pixels\) = array of black and white pixels indicating on
-              which areas of the wall light is incident
+       \(cylinders\) = a list of pairs of positions specifying the end faces of the cylinders
+output: \(pixels\) = array of black and white pixels indicating on which areas of the wall
+              light is incident
 
 initialize \(pixels\) to be uniformly white (illuminated)
 
 for each \(sphere\) in \(spheres\):
-  if the sphere is entirely above the light or below the shadow
-        plane:
+  if the sphere is entirely above the light or below the shadow plane:
     it casts no shadow; continue to the next sphere
   if the top of the sphere is beneath the light and the bottom is above the plane:
     The shadow cast on the plane will be elliptical.
@@ -162,14 +160,14 @@ for each \(sphere\) in \(spheres\):
     The equation has the form \(A*x^2 + B*y^2 + C*x*y + D*x + E*y + F = 0\).
     Rearrange the equation to have the form \(G(x)*y^2 + H(x)*y + I(x) = 0\), where
         \(G\), \(H\), and \(I\) are 2nd order or lower polynomials in x.
-    For each column c in pixels:
-      Find the value of x that corresponds to c.
-      Calculate G(x), H(x), and I(x).
-      Use the quadratic formula to find two values of y satisfying the
+    For each column \(c\) in pixels:
+      Find the value of \(x\) that corresponds to \(c\).
+      Calculate \(G(x)\), \(H(x)\), and \(I(x)\).
+      Use the quadratic formula to find two values of \(y\) satisfying the
           equation for the boundary of the ellipse.
-      Convert the values of y to row coordinates in the image.
-      In column c and all rows r between the two calculated:
-        color pixels[r][c] black
+      Convert the values of \(y\) to row coordinates in the image.
+      In column \(c\) and all rows \(r\) between the two calculated:
+        color \(pixels[r][c]\) black
   if the sphere intersects the shadow plane:
     Handling this case is at least as complicated as handling a sphere strictly
         above the plane.
@@ -274,7 +272,7 @@ k = \frac{\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|}{\|proj_{\vec{c}-\vec{l
 
 %\includegraphics[scale=0.60]{sphere_shadow_figure_2}
 
-Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{xproperty}).
+Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{sproperty}).
 \begin{align*}
 proj_{\vec{u}} \vec{v} &= \vec{u} \frac{\vec{u}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\\
 orth_{\vec{u}} \vec{v} &= \vec{v} - proj_{\vec{u}} \vec{v}
