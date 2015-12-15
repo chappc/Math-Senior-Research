@@ -4,6 +4,8 @@
 \usepackage{amsmath, amsthm, amssymb, amsrefs}
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{breqn}
+\usepackage[]{algorithm2e}
 
 %opening
 \title{Tools and Ideas for the Proceedural Generation of Shadow Sculptures.}
@@ -18,8 +20,8 @@ This paper discusses the creation of three dimensional objects,
 given a shadow, a light source, and a wall, such that the object
 creates the shadow on the wall when placed under the light source.
 This problem was inspired by the artwork of Larry Kagan, a retired
-professor at RPI. The use of classical and real valued genetic
-algorithms to create these objects is demonstrated. A visualization
+professor at RPI. The use of genetic
+algorithms to create these objects is discussed. A visualization
 tool is described that shows how the object would look as a finished
 product. We describe our respresentation of an object which is based
 on the techniques Kagan uses in his art. An efficient way to
@@ -27,11 +29,10 @@ calculate the shadow cast by an object with this representation is
 required in order to evaluate fitness in the genetic algorithm. We
 describe our approach to shadow rendering. One component of fitness
 in the genetic algorithm is the fidelity of the cast shadow to the
-desired result. We use an industry standard algorithm which is often
-applied in image quality analysis to judge the quality of the
-shadows. Having described the means to evaluate the fitness of a
+desired result. We discuss how we evaluate this degree of similarity.
+Having described the means to evaluate the fitness of a
 candidate object, we proceed to explain the recombination techniques
-we used to create each generation of objects from the parent generation.
+we suggest using to create each generation of objects from the parent generation.
 \end{abstract}
 
 \section*{Introduction}
@@ -43,7 +44,7 @@ that have been bent to shape and welded together to form a whole.
 This assembly is mounted on a wall (painted white) and a spot light
 shines on it to cast a shadow on the wall that forms an image. In a
 naive sense, the problem  of creating something like Kagan's work is
-a very simple one: create a metal object in the shape of the desired
+a very simple one: one solution is to create a metal object in the shape of the desired
 shadow but scaled down by half, then mount this half way between the
 light source and the wall. The mounting can be done by means of
 straight bars that travel in the shadow from the rest of the object
@@ -60,11 +61,11 @@ obvious requirement that the shadow appear as desired.
 
 Other components of fitness of the object in the genetic algorithm
 are its structural stability, its visual chaoticness, and its ability
-to be fabricated using techniques similar to what Kagan uses. We did
-not fully address structural stability in our research. Visual
-chaoticness is achieved by the random nature of the selection process.
-Fabricability is included because it adds another contraint in a
-problem that has few. It is was key consideration when we decided
+to be fabricated using techniques similar to what Kagan uses. Structural stability
+is addressed in section \ref{GA}. Visual
+chaos is achieved by the random nature of the selection process.
+Fabricability is included because it adds another constraint in a
+problem that has few. It was key consideration when we decided
 how to represent these sculptures.
 
 \section{Larry Kagan's Work} \label{kagan}
@@ -136,15 +137,36 @@ We investigated two CPU based ways to render the shadows of objects with a repre
 
 The first method is partially implemented in the file `rayTracing.py' on the branch `master' in the submitted git repository. In this method the cast shadow of each sphere and cylinder is computed individually and merged. Here is some pseudo-code for rendering the shadow of a collection of spheres and cylinders illuminated by a single point light source:
 
-input: l = position of light
-	   r = the radius of each sphere and cylinder
-	   spheres = a list of positions of centers of spheres
-	   cylinders = a list of pairs of positions specifying the end faces of the
-					cylinders
-output: pixels = array of black and white pixels indicating on which areas of the
-					wall light is incident
+\begin{dmath*}
+\vec{l} = position of light\\
+\vec{r} = the radius of each sphere and cylinder\\
+spheres = a list of positions of centers of spheres\\
+cylinders = a list of pairs of positions specifying the end faces of the cylinders
+\end{dmath*}
 
-initialize pixels to be uniformly white (illuminated)
+\begin{algorithm}[H]
+\DontPrintSemicolon
+ \KwData{$\vec{l}$ = position of light, $\vec{r}$ = the radius of each sphere and cylinder, $spheres$ = a list of positions of centers of spheres, $cylinders$ = a list of pairs of positions specifying the end faces of the cylinders}
+ \KwResult{$pixels$ = array of black and white pixels indicating on which areas of the wall light is incident}
+ $pixels \leftarrow$ a uniformly white (illuminated) image of the desired size\;
+ \For{each sphere in spheres}{
+  read current\;
+  \eIf{understand}{
+   go to next section\;
+   current section becomes this one\;
+   }{
+   go back to the beginning of current section\;
+  }
+ }
+ \For{each cylinder in cylinders}{
+  \tcp*[h]{similar to the above but cylinders cast different}
+  \tcp*[h]{shaped shadows}\\
+  \tcp*[h]{This case is not handled by our code.}
+ }
+ \caption{first shadow rendering method}
+\end{algorithm}
+
+
 
 for each sphere in spheres:
 	if the sphere is entirely above the light or below the shadow plane:
@@ -183,11 +205,6 @@ for each sphere in spheres:
 		This case is not handled by our code, but it would likely be similar to
 				the case of elliptical shadows.
 
-for each cylinder in cylinders:
-	//similar to the above but cylinders cast different shaped shadows
-	// ...
-	This case is not handled by our code.
-
 This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds for our python implementation. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU, or perhaps with single instruction multiple data technologies like SSE and AVX.
 
 We did not implement casting the shadows of cylinders by this method, but there is an optimization that deserves mention. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders.
@@ -209,7 +226,7 @@ The refinement that can be added is simplest to understand if we restrict oursel
 
 It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting ``image'' is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall.
 
-\section{Genetic Algorithm Solutions}
+\section{Genetic Algorithm Solutions} \label{GA}
 We believe approximate solutions to the forward problem may be possible using genetic algorithms for creating ``abstract'' data that fits a given shadow.  The question then becomes how to represent data for each possible solution to the problem in a genome that allows simple crossovers and mutations.  Some possible representations are as follows: 
 
 The simplest method of representing nodes and edges would be to keep the number of both constant, moving the nodes around while retaining the same edge mappings for all genomes.  This way, one could represent each node as an unsigned integer, or an array of three unsigned integers representing the positive incremental distance from some origin point.  Given the nature of the problem, one can disregard any space not within the projection from the light source to a given section of the wall.  This allows the bounding of the entire system in a cube, which we can use to define our \texttt{0} and our \texttt{MAX\_INT} for each coordinate direction.  Next, we would create an array of unsigned integers, of length 3 times the number of nodes in the system.  This would be the genome for the genetic algorithm.  The fitness function would be defined as the number of matching pixels (within a certain threshold) between the input and the generated shadow using one of the shadowmapping methods above.  Using such a method would prevent situations where the graph became unconnected, but it does not address issues of structural integrity any further than this.  Since the nature of the problem allows for many local solutions, the ability of such a genetic algorithm to converge may be slowed.
@@ -235,16 +252,18 @@ The visualization tool lacks the ability to draw shadows cast on the object by i
 
 Is it a good idea to combine the two cpu-based shadow-rendering techniques? For example, use the second method to draw spheres and the first to draw cylinders?
 
+We should use bresenham's algorithm to draw an ellipse once we have its parameters, instead of the naive method we use now.
+
 \begin{appendices}
 \chapter{A} \label{a}
 
 In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the $z=0$ plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
 
-The first step is to derive the equation of the shadow cone. A generic point on the cone will be denoted by $\vec{x}$. The axis of the cone passes through $\vec{l}$ and through $\vec{c}$. The defining property of $\vec{x}$ is 
-\begin{equation}\label{xproperty}
-\|orth_{\vec{c}-\vec{l}} (\vec{x} - \vec{l})\| = \|proj_{\vec{c}-\vec{l}} (\vec{x} - \vec{l})\| \cdot k
+The first step is to derive the equation of the shadow cone. A generic point on the cone will be denoted by $\vec{s}$. The axis of the cone passes through $\vec{l}$ and through $\vec{c}$. The defining property of $\vec{s}$ is 
+\begin{equation}\label{sproperty}
+\|orth_{\vec{c}-\vec{l}} (\vec{s} - \vec{l})\| = \|proj_{\vec{c}-\vec{l}} (\vec{s} - \vec{l})\| \cdot k
 \end{equation}
-where $k$ is a constant characteristic of the aperture of the cone. Equation (\ref{xproperty}) says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $k$ can be calculated from any point on the cone. We will calculate $k$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone.
+where $k$ is a constant characteristic of the aperture of the cone. Equation (\ref{sproperty}) says that the distance of a point from the cone's axis is in constant proportion to its distance along the axis. The value of $k$ can be calculated from any point on the cone. We will calculate $k$ from the projection and orthogonal projection of a point of tangency, $\vec{p}$, of the sphere and cone.
 
 The vector $\vec{p} - \vec{l}$ is along a generatrix of the cone, so it is perpendicular to $\vec{p} - \vec{c}$, which points from the center of the sphere to the point of tangency (see figure \ref{fig:shadow_1}). Therefore, a right triangle is formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$, with $\vec{c}$ and $\vec{l}$ at the ends of the hypotenuse. The length $L=\|\vec{c}-\vec{l}\|$ can be calculated from the givens and the distance $r=\|\vec{p}-\vec{c}\|$ is a given. By the pythagorean theorem the length of the other leg is $L'=\|\vec{p}-\vec{l}\|=\sqrt{L^2-r^2}$. In figure \ref{fig:shadow_2} the triangle formed by the projection and orthogonal projection of $\vec{p}-\vec{l}$ onto $\vec{c}-\vec{l}$ is shown with the triangle formed by $\vec{p}$, $\vec{c}$, and $\vec{l}$. The triangles are similar because they share two congruent angles. Thus their sides have the same proportions. In particular:
 \[
@@ -269,30 +288,46 @@ k = \frac{\|orth_{\vec{c}-\vec{l}} (\vec{p} - \vec{l})\|}{\|proj_{\vec{c}-\vec{l
 
 Now we use the defintions of $orth_{\vec{u}} \vec{v}$ and $proj_{\vec{u}} \vec{v}$ to simplify equation (\ref{xproperty}).
 \begin{align*}
-proj_{\vec{u}} \vec{v} = \vec{u} \frac{\vec{u}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\\
-orth_{\vec{u}} \vec{v} = \vec{v} - proj_{\vec{u}} \vec{v}
+proj_{\vec{u}} \vec{v} &= \vec{u} \frac{\vec{u}\cdot\vec{v}}{\vec{u}\cdot\vec{u}}\\
+orth_{\vec{u}} \vec{v} &= \vec{v} - proj_{\vec{u}} \vec{v}
 \end{align*}
-Start by squaring both sides of \ref{xproperty} and substituting. Let $\vec{d} = \vec{c}-\vec{l}$, $y = \vec{x}-\vec{l}$.
+Start by squaring both sides of \ref{sproperty} and substituting. Let $\vec{d} = \vec{c}-\vec{l}$, $\vec{t} = \vec{s}-\vec{l}$.
 \begin{align*}
-\|\vec{y} - \vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}\|^2 = \|\vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}\|^2 \cdot k^2\\
-\vec{y}\cdot\vec{y}-2\vec{y}\cdot\vec{d} \frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}}+\vec{d}\cdot\vec{d}(\frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}})^2 = (\vec{d}\cdot\vec{d}) (\frac{\vec{d}\cdot\vec{y}}{\vec{d}\cdot\vec{d}})^2 \cdot k^2
+\|\vec{t} - \vec{d} \frac{\vec{d}\cdot\vec{t}}{\vec{d}\cdot\vec{d}}\|^2 &= \|\vec{d} \frac{\vec{d}\cdot\vec{t}}{\vec{d}\cdot\vec{d}}\|^2 \cdot k^2\\
+\vec{t}\cdot\vec{t}-2\vec{t}\cdot\vec{d} \frac{\vec{d}\cdot\vec{t}}{\vec{d}\cdot\vec{d}}+\vec{d}\cdot\vec{d}(\frac{\vec{d}\cdot\vec{t}}{\vec{d}\cdot\vec{d}})^2 &= (\vec{d}\cdot\vec{d}) (\frac{\vec{d}\cdot\vec{t}}{\vec{d}\cdot\vec{d}})^2 \cdot k^2
 \end{align*}
 Multiply each side by $\vec{d}\cdot\vec{d}$:
 \begin{align*}
-(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-2(\vec{d}\cdot\vec{y})^2+(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2\\
-(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{y})^2  = (\vec{d}\cdot\vec{y})^2 \cdot k^2
+(\vec{t}\cdot\vec{t})(\vec{d}\cdot\vec{d})-2(\vec{d}\cdot\vec{t})^2+(\vec{d}\cdot\vec{t})^2  &= (\vec{d}\cdot\vec{t})^2 \cdot k^2\\
+(\vec{t}\cdot\vec{t})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{t})^2 & = (\vec{d}\cdot\vec{t})^2 \cdot k^2
 \end{align*}
 Divide both sides by $k^2$ and substitute $k^2 = r^2 / ( L^2-r^2)$.
 \begin{align*}
-((\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{y})^2)\cdot ( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2\\
-(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2(1 + ( L^2-r^2)/r^2)\\
-(\vec{y}\cdot\vec{y})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 =  (\vec{d}\cdot\vec{y})^2 L^2/r^2
+((\vec{t}\cdot\vec{t})(\vec{d}\cdot\vec{d})-(\vec{d}\cdot\vec{t})^2)\cdot ( L^2-r^2)/r^2 &=  (\vec{d}\cdot\vec{t})^2\\
+(\vec{t}\cdot\vec{t})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 &=  (\vec{d}\cdot\vec{t})^2(1 + ( L^2-r^2)/r^2)\\
+(\vec{t}\cdot\vec{t})(\vec{d}\cdot\vec{d})( L^2-r^2)/r^2 &=  (\vec{d}\cdot\vec{t})^2 L^2/r^2
 \end{align*}
 The quantities $\vec{d}\cdot\vec{d}$ and $L^2$ are equal (see figure \ref{fig:shadow_1}).
-\[
-(\vec{y}\cdot\vec{y})( L^2-r^2) =  (\vec{d}\cdot\vec{y})^2
-\]
-Now we find the intersection of this cone with the $z=0$ plane. The condition for intersection is that the third component of $\vec{x}$ be $0$.
+\begin{equation}\label{coneeqn}
+(\vec{t}\cdot\vec{t})( L^2-r^2) =  (\vec{d}\cdot\vec{t})^2
+\end{equation}
+Now we find the intersection of this cone with the $z=0$ plane. Let $x$ and $y$ be coordinates on the shadow plane. The condition for intersection is that the third component of $\vec{s}$ be $0$. We put $\vec{t}$ and $\vec{d}$ in terms of $x$ and $y$ and substitute into equation \ref{coneeqn}.
+\begin{align*}
+\vec{s}& = \langle x,y,0 \rangle\\
+\vec{d}\cdot\vec{t} &= \vec{d}\cdot\vec{s} - \vec{d}\cdot\vec{l} = d_1x+d_2y - \vec{d}\cdot\vec{l}\\
+\vec{t}\cdot\vec{t} &= \vec{s}\cdot\vec{s} -2\vec{s}\cdot\vec{l} + \vec{l}\cdot\vec{l} = x^2 + y^2-2l_1x-2l_2y+ \vec{l}\cdot\vec{l}\\
+(\vec{d}\cdot\vec{t})^2 &= (d_1x+d_2y - \vec{d}\cdot\vec{l})^2\\
+&= (d_1x+d_2y)^2 - 2(d_1x+d_2y)(\vec{d}\cdot\vec{l}) + (\vec{d}\cdot\vec{l})^2\\
+&= d_1^2x^2+2d_1d_2xy+d_2^2y^2-2d_1x(\vec{d}\cdot\vec{l})-2d_2y(\vec{d}\cdot\vec{l})+(\vec{d}\cdot\vec{l})^2\\
+&= d_2^2y^2 + (2d_1d_2x -2d_2(\vec{d}\cdot\vec{l}))y + (d_1^2x^2-2d_1x(\vec{d}\cdot\vec{l})+(\vec{d}\cdot\vec{l})^2)\\
+(\vec{t}\cdot\vec{t})( L^2-r^2) &= (x^2 + y^2-2l_1x-2l_2y+ \vec{l}\cdot\vec{l})(L^2-r^2)\\
+&= (L^2-r^2)y^2 + (-2l_2(L^2-r^2))y + (x^2-2l_1x+ \vec{l}\cdot\vec{l})(L^2-r^2)
+\end{align*}
+For the final result we subtract the one side of equation \ref{coneeqn} from the other to obtain:
+\begin{dmath*}
+0 = (\vec{d}\cdot\vec{t})^2 - (\vec{t}\cdot\vec{t})( L^2-r^2)\\
+= (d_2^2 - (L^2-r^2))y^2 + (2d_1d_2x -2d_2(\vec{d}\cdot\vec{l})+2l_2(L^2-r^2))y+(d_1^2x^2-2d_1x(\vec{d}\cdot\vec{l})+(\vec{d}\cdot\vec{l})^2 - (x^2-2l_1x+ \vec{l}\cdot\vec{l})(L^2-r^2))
+\end{dmath*}
 
 \end{appendices}
 
