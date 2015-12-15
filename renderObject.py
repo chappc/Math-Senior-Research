@@ -90,6 +90,7 @@ def cylinder( q, v1, v2, r ):
 
   v = math.sqrt( vx*vx + vy*vy + vz*vz )
   ax = 57.2957795*math.acos( vz/v )
+  # 57.2957795 degrees = 1 radian
   if vz < 0.0:
     ax = -ax
   rx = -vy*vz

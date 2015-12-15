@@ -16,6 +16,8 @@
 
 \maketitle
 
+\renewcommand{\baselinestretch}{1.5}
+
 \begin{abstract}
 This paper discusses the creation of three dimensional objects,
 given a shadow, a light source, and a wall, such that the object
@@ -127,7 +129,7 @@ Using the method of spheres and cylinders, objects can be graphically modeled an
     \label{fig:render_3}
 \end{figure}
 
-To further explain the algorithm behind this method, first let us describe how the object would be represented.  The method used is most similar to the second representation of objects discussed previously, as spheres and cylinders in a graph layout.  Each object would consist of a list of nodes or spheres $W$, a list of edges or cylinders $E$, and a radius $r$.  The nodes in $W$ are described using 3-tuples of floating point numbers, representing their location in Cartesian 3-space, and the edges in $E$ are represented by 2-tuples of indexes, referencing the two nodes in $W$.  The algorithm iterates over the nodes in $W$, creating spheres of radius $r$.  Then, it iterates over the edges in $E$, and for each edge $e$ creates cylinders with radius $r$ and endpoints centered on the two nodes in $W$ indexed by $e$.  This is done using pyOpenGL's 
+To further explain the algorithm behind this method, first let us describe how the object would be represented.  The method used is most similar to the second representation of objects discussed previously, as spheres and cylinders in a graph layout.  Each object would consist of a list of nodes or spheres $W$, a list of edges or cylinders $E$, and a radius $r$.  The nodes in $W$ are described using 3-tuples of floating point numbers, representing their location in Cartesian 3-space, and the edges in $E$ are represented by 2-tuples of indexes, referencing the two nodes in $W$.  The algorithm iterates over the nodes in $W$, creating spheres of radius $r$.  Then, it iterates over the edges in $E$, and for each edge $e$ creates cylinders with radius $r$ and endpoints centered on the two nodes in $W$ indexed by $e$.  This is done using pyOpenGL's \texttt{gluSphere()} to draw spheres and \texttt{gluCylinder()} to draw cylinders.  For more information on the programming in this implementation, see \texttt{renderObject.py}.\ref{gitrepo}
 
 For a more updated model that could possibly fix both the issue of slow shadow rendering time and separation of the shadow rendering from the object's rendering, one may instead of legacy OpenGL use OpenGL 3.3 or above, which adds the use of fragment shaders, and can render shadows from point light sources fairly easily.  The question that arises in this method, however, is how one would compare two shadows to determine accuracy and fitness of an object.  This would require further research and testing.
 
@@ -319,13 +321,26 @@ For the final result we subtract the one side of equation \ref{coneeqn} from the
    address={New York},
    year={2006}  
   }
-  
   \bib{pyOpenGL}{webpage}{
    title={PyOpenGL Documentation},
    url={http://pyopengl.sourceforge.net/documentation/},
    accessdate={October 2015}
   }
+  \bib{gitrepo}{webpage}{
+   title={Genetic Algorithms for Shadow Sculptures},
+   author={Chris Chappell},
+   author={James Hoctor},
+   url={https://github.com/chappc/Math-Senior-Research},
+   accessdate={December 2015}
+  }
+  \bib{cylindermagic}{webpage}{
+   title={Rendering a Cylinder Between Two Points in OpenGL},
+   author={Parris, Joel},
+   url={http://lifeofaprogrammergeek.blogspot.com/2008/07/rendering-cylinder-between-two-points.html}
+   accessdate={October 2015},
+  }
  \end{biblist}
+ 
 \end{bibdiv}
 
 
