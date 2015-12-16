@@ -211,7 +211,7 @@ The innermost loop (over all spheres and cylinders) can be accelerated by use of
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{clumping_figure.png}
-    \caption{dfsd}
+    \caption{The space partitioning scheme used in the second shadow rendering method. The extension to three dimensions is not difficult.}
     \label{fig:shadow_2}
 \end{figure}
 
@@ -238,17 +238,22 @@ Another mutation would be to swap the position of two nodes.  This would not req
 Mutations can also be performed on edge data.  This can simply be done by inverting bits in the adjacency matrix, which would cause edges to disappear or new edges to occur.  This could be used along with the first mutation option to give the complete range of options for convergence, barring adding or removing nodes themselves.  The downside to this form of mutation is that it could make the graph unconnected, which, like doing combinations on edges, would require either some penalty in the fitness function, or a checker to make sure any edge that is removed is not required to keep the graph fully connected.
 
 \section{Future Work}
-What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
+There is a good deal of work left to do before a machine can generate a sculpture in Larry Kagan's style. Although we have ideas about how a genetic algorithm could perform this task, once one is implemented there will likely be a good deal of experimentation required before it works well. We had also intended to investigate standard metrics for image quality analysis for use judging the accuracy of a shadow in representing an image. The time taken to render a single shadow is currently several seconds. This cost will be incurred for each fitness evaluation in a genetic algorithm, which strongly suggests that accelerating this process is a prerequisite for experimenting with genetic algorithms. There is code, \texttt{shadowMap.py}, in the git repository \cite{gitrepo} that is based heavily on code from opengl-tutorial.org \cite{opengl-tutorial}. This code is a very early stage investigation of the use of pyOpenGL to do shadow mapping. One current stumbling block with this code is that the C++ code it is based on makes use of a library called OpenGL Mathematics (GLM) which is not available for python \cite{GLM}.
 
-How can the partitioning of space in the second rendering method be improved to allow faster shadow drawing? More equally sized partitions? Adaptively sized partitions?
+There are also a number of interesting questions and developments to investigate, which we list here.
+\begin{itemize}
+  \item What is the best way to use point sources to simulate a diffuse light source? Is there a better way than point light sources to simulate a diffuse source?
 
-The inverse square law is not respected by our shadow drawing algorithms. (Does this Include the OpenGL one?) Can this law be incorporated into our algorithms? Is it even necessary to include this or does the human visual system ignore this variation in brightness? Mention the image processing technique histogram equalization.
+  \item How can the partitioning of space in the second rendering method be improved to allow faster shadow drawing? More equally sized partitions? Adaptively sized partitions?
 
-The visualization tool lacks the ability to draw shadows cast on the object by itself. These shadows are not an important component of Kagan's art as far as we can tell.
+  \item The inverse square law is not respected by any of our shadow drawing algorithms. Can this law be incorporated into our algorithms? Is it even necessary to include this or does the human visual system ignore this variation in brightness?
 
-Is it a good idea to combine the two cpu-based shadow-rendering techniques? For example, use the second method to draw spheres and the first to draw cylinders?
+  \item The visualization tool lacks the ability to draw shadows cast on the object by itself. These shadows are not an important component of Kagan's art as far as we can tell.
 
-We should use bresenham's algorithm to draw an ellipse once we have its parameters, instead of the naive method we use now.
+  \item Is it a good idea to combine the two cpu-based shadow-rendering techniques? For example, use the second method to draw spheres and the first to draw cylinders?
+
+  \item In the first shadow rendering method, it would be faster to use Bresenham's algorithm to draw an ellipse once we have its parameters, instead of the naive method we use now.
+\end{itemize}
 
 \begin{appendices}
 \section{A} \label{app:ellipse_derivation}
@@ -365,6 +370,11 @@ For the final result we subtract the one side of equation \ref{coneeqn} from the
    title={Larry Kagan Sculpture},
    url={http://larrykagansculpture.com/},
    accessdate={October 2015}
+  }
+  \bib{GLM}{webpage}{
+   title={OpenGL Mathematics Library},
+   url={http://glm.g-truc.net/0.9.4/index.html},
+   accessdate={December 2015}
   }
  \end{biblist}
  
