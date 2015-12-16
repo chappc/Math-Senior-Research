@@ -11,7 +11,7 @@
 
 
 %opening
-\title{Tools and Ideas for the Proceedural Generation of Shadow Sculptures.}
+\title{Tools and Ideas for the Procedural Generation of Shadow Sculptures}
 \author{James Hoctor, Chris Chappell}
 
 \begin{document}
@@ -40,13 +40,13 @@ we suggest using to create each generation of objects from the parent generation
 \end{abstract}
 
 \section*{Introduction}
-This paper addresses the proceedural generation of artwork, if such
+This paper addresses the procedural generation of artwork, if such
 a thing is even possible. We wish to create art in the style of
 Larry Kagan, whose medium is metal and the shadows it casts. In a
 typical Kagan piece there is a metal object made from steel bars
 that have been bent to shape and welded together to form a whole.
-This assembly is mounted on a wall (painted white) and a spot light
-shines on it to cast a shadow on the wall that forms an image. In a
+This assembly is mounted on a white wall and a spot light
+shines on it to cast a shadow that forms an image on the wall. In a
 naive sense, the problem  of creating something like Kagan's work is
 a very simple one: one solution is to create a metal object in the shape of the desired
 shadow but scaled down by half, then mount this half way between the
@@ -69,11 +69,11 @@ to be fabricated using techniques similar to what Kagan uses. Structural stabili
 is addressed in section \ref{GA}. Visual
 chaos is achieved by the random nature of the selection process.
 Fabricability is included because it adds another constraint in a
-problem that has few. It was key consideration when we decided
+problem that has few. It was a key consideration when we decided
 how to represent these sculptures.
 
 \section{Larry Kagan's Work} \label{kagan}
-In researching this problem we made a brief study of Kagan's work for
+In researching this problem we studied of Kagan's work for
 several reasons. Firstly, we wanted to identify a subset of his work
 that might be most easily imitated. Secondly, our analysis shows how
 necessary this restriction is. Kagan's work is too varied for the
@@ -82,7 +82,14 @@ Kagan selects the image he wishes to create from shadow. In all of our
 work we leave this crucial piece of creative heavy lifting to the
 experts: humans.
 
-Each of Larry Kagan's sculptures consists of a metal structure
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{mosquito_full.jpg}
+    \caption{Larry Kagan's ``Mosquito I''}
+    \label{fig:mosquito}
+\end{figure}
+
+Each of Kagan's sculptures consists of a metal structure
 composed of bent rods of metal mounted to a wall and illuminated by
 a bright light from a carefully chosen location. The eye is drawn to
 the shadow produced this way, which forms a familiar image, while the
@@ -99,13 +106,13 @@ is in ``At''. With the light source on one side the shadow falls
 predominantly on the side of the sculpture. Despite the fact that a
 single small bright light source is installed to cast the shadow for
 each sculpture, soft egdes of the shadow are noticeable in many of
-these works. In ``Mosquito I'', Kagan uses this effect in a dramatic
+these works. In ``Mosquito I'' \ref{fig:mosquito}, Kagan uses this effect in a dramatic
 way; the image present in the shadow of this sculpture is a mosquito
 with its own shadow cast by an imaginary light source. In order to
 make the distinction obvious, Kagan allowed soft shadow edges to show
 in the portion of the image corresponding to the imaginary shadow of
 the mosquito, but created the image of the mosquito with dark
-hard-edged shadows. All of these sculptures (with the exception of ``At'') can be viewed on Larry Kagan's website \cite{Kagan}.
+hard-edged shadows. All of these sculptures can be viewed on Larry Kagan's website \cite{Kagan}.
 
 \section{How We Represent Sculptures and Why}
 There are two different representations of sculptures used in this project. Both were chosen to make it likely that a sculpure that can be represented in our programs will be possible to make using techniques similar to Kagan's.
@@ -121,20 +128,20 @@ The second representation that we use also makes use of the idea of spheres conn
 Since any sculpture having a representation of the first kind has a representation of this second kind, but not vice versa, it is more likely that a sculpture with a representation of this second type will fail to be fabricable. Because of this, we propose that this representation be used with several checks. For example, one might check that no node has an order greater than 4 or 5, and that at least a certain percent of nodes have an order of 2 or fewer.
 
 \section{How We Render Sculptures} \label{sculpture_render}
-Using the method of spheres and cylinders, objects can be graphically modeled and displayed in 3D rendering systems fairly easily.  One method of doing this that we tested was using OpenGL to build a little engine that could render the object and a small surface such that the object and the shadow could be viewed from multiple angles, as it would look if it were printed.  The shadow could be imported as a texture, using OpenGL's \texttt{GL\_TEXTURE2D} object, and then fitted to the surface that would compose the wall.  This would allow modularity and would separate the methods that composed the creation of the shadow and its rendering.  While this may not be optimal, it is the most easily supported method using OpenGL legacy code.
+Using the method of spheres and cylinders, objects can be graphically modeled and displayed in 3D rendering systems fairly easily.  One method that we tested was using OpenGL to build a little engine that could render the object and a small surface, such that the object and the shadow could be viewed from multiple angles.  The shadow could be imported as a texture, using OpenGL's \texttt{GL\_TEXTURE2D} object, and then fitted to the surface that would compose the wall.  This would allow modularity and would separate the methods that composed the creation of the shadow and its rendering.  While this may not be optimal, it is the most easily supported method using OpenGL legacy code.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{object-render3.png}
     \caption{A sample render of ten spheres and their shadows.  The light source used was made up of nine point light sources, grouped together very closely.}
     \label{fig:render_3}
 \end{figure}
 
-To further explain the algorithm behind this method, first let us describe how the object would be represented.  The method used is most similar to the second representation of objects discussed previously, as spheres and cylinders in a graph layout.  Each object would consist of a list of nodes or spheres $W$, a list of edges or cylinders $E$, and a radius $r$.  The nodes in $W$ are described using 3-tuples of floating point numbers, representing their location in Cartesian 3-space, and the edges in $E$ are represented by 2-tuples of indexes, referencing the two nodes in $W$.  The algorithm iterates over the nodes in $W$, creating spheres of radius $r$.  Then, it iterates over the edges in $E$, and for each edge $e$ creates cylinders with radius $r$ and endpoints centered on the two nodes in $W$ indexed by $e$.  This is done using pyOpenGL's \texttt{gluSphere()} to draw spheres and \texttt{gluCylinder()} to draw cylinders.  For more information on the programming in this implementation, see \texttt{renderObject.py}.\cite{gitrepo}
+To further explain the algorithm behind this method, first let us describe how the object would be represented.  The method used is most similar to the second representation of objects discussed previously, as spheres and cylinders in a graph layout.  Each object would consist of a list of nodes or spheres $W$, a list of edges or cylinders $E$, and a radius $r$.  The nodes in $W$ are described using 3-tuples of floating point numbers, representing their location in Cartesian 3-space, and the edges in $E$ are represented by 2-tuples of indices, referencing the two nodes in $W$.  The algorithm iterates over the nodes in $W$, creating spheres of radius $r$.  Then, it iterates over the edges in $E$, and for each edge $e$ creates cylinders with radius $r$ and endpoints centered on the two nodes in $W$ indexed by $e$.  This is done using pyOpenGL's \texttt{gluSphere()} to draw spheres and \texttt{gluCylinder()} to draw cylinders.  For more information on the programming in this implementation, see \texttt{renderObject.py}.\cite{gitrepo}
 
-For a more updated model that could possibly fix both the issue of slow shadow rendering time and separation of the shadow rendering from the object's rendering, one may instead of legacy OpenGL use OpenGL 3.3 or above, which adds the use of fragment shaders, and can render shadows from point light sources fairly easily.  The question that arises in this method, however, is how one would compare two shadows to determine accuracy and fitness of an object.  This would require further research and testing.
+For a more updated model that could potentially fix both the issue of slow shadow rendering time and separation of the shadow rendering from the object's rendering, one may instead of legacy OpenGL use OpenGL 3.3 or above.  OpenGL 3.3 adds the use of fragment shaders, and can render shadows from point light sources fairly easily.  The question that arises in this method, however, is how one would compare two shadows to determine accuracy and fitness of an object.  This would require further research and testing.
 
-There are many video game engines that have builtin methods for shadow generation, with many options and customizable settings for doing so.  This may be the simplest option for rendering objects, and possibly even would also allow for comparison and heuristic generation.  Such engines would include Unity, Unreal Engine, and Source 2, just to name a few.  As our knowledge did not extend to the realm of writing video games, we felt more comfortable working with OpenGL.
+There are many video game engines that have builtin methods for shadow generation, with many options and customizable settings for doing so.  This may be the simplest option for rendering objects, and potentially would allow for comparison and heuristic generation.  Such engines would include Unity, Unreal Engine, and Source 2, just to name a few.  As our knowledge did not extend to the realm of writing video games, we felt more comfortable working with OpenGL.
 
 \section{How We Render Shadows}
 We investigated two CPU based ways to render the shadows of objects with a representation of the first kind (a list of strands). We believe that the increased speed of a GPU-based approach would be beneficial to the implementation of a genetic algorithm.
@@ -153,7 +160,7 @@ initialize \(pixels\) to be uniformly white (illuminated)
 
 for each \(sphere\) in \(spheres\):
   if the sphere is entirely above the light or below the shadow plane:
-    it casts no shadow; continue to the next sphere
+    it casts no shadow; continue to the next sphere.
   if the top of the sphere is beneath the light and the bottom is above the plane:
     The shadow cast on the plane will be elliptical.
     Calculate the equation of the cone formed by all lines passing through the
@@ -170,7 +177,7 @@ for each \(sphere\) in \(spheres\):
           equation for the boundary of the ellipse.
       Convert the values of \(y\) to row coordinates in the image.
       In column \(c\) and all rows \(r\) between the two calculated:
-        color \(pixels[r][c]\) black
+        color \(pixels[r][c]\) black.
   if the sphere intersects the shadow plane:
     Handling this case is at least as complicated as handling a sphere strictly
         above the plane.
@@ -196,7 +203,7 @@ for each cylinder in cylinders:
 
 This proceedure needs to be repeated for each point light source, creating a separate image for each. Then these images need to be averaged, pixel by pixel. When generating a 1024x720 image of the shadow this averaging process took about 1.2 seconds for our python implementation. With a 3000x3000 image it took almost 13 seconds. It should be possible to take advantage of data parallelism here and do the averaging process in OpenGL on a GPU, or perhaps with single instruction multiple data technologies like SSE and AVX.
 
-We did not implement casting the shadows of cylinders by this method, but there is an optimization that deserves mention. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders.
+We did not implement casting the shadows of cylinders by this method, but nonetheless there is an optimization that deserves mention in regards to casting shadows of cylinders. It results from the fact that we can assume there is a sphere present at each end of any cylinder. Consequentially, any cylinder that is aligned with one face toward the light source casts a shadow only where a sphere has already cast a shadow. The optimization that arises from this is to ignore cylinders with such an orientation in the loop over all cylinders.
 
 Furthermore, even when the cylinder is not aligned this way we can skip drawing the portion of the shadow that results from the end faces, for the same reason. In this case, the shadow drawn for a cylinder would be a quadrilateral. Imagine two planes, each of which is tangent to the circular wall of the cylinder and passes through the point light source. They are tangent on opposite sides of the cylinder. Each plane has an intersection point with each circular face of the cylinder. The four such intersection points are co-planer, and the quadrilateral they form is entirely inside the cylinder. The shadow of this quadrilateral is thus a part of the shadow of the cylinder. The remaining part of the cylinder's shadow should also be shadowed by the spheres.
 
@@ -256,7 +263,7 @@ There are also a number of interesting questions and developments to investigate
 \end{itemize}
 
 \begin{appendices}
-\section{A} \label{app:ellipse_derivation}
+\section{Shadow Calculations} \label{app:ellipse_derivation}
 
 In this appendix we will show in detail the calculation of the boundary of a shadow cast by a sphere by a point light source. The shadow is cast on the $z=0$ plane. On the z-axis the sphere is strictly between the light and the plane. We are given $\vec{l}$, the location of the point light source, $\vec{c}$, the center of the sphere, and $r$, its radius.
 
@@ -350,8 +357,8 @@ For the final result we subtract the one side of equation \ref{coneeqn} from the
   }
   \bib{gitrepo}{webpage}{
    title={Genetic Algorithms for Shadow Sculptures},
-   author={Chris Chappell},
-   author={James Hoctor},
+   author={Chappell, Chris},
+   author={Hoctor, James},
    url={https://github.com/chappc/Math-Senior-Research},
    accessdate={2015-12}
   }
