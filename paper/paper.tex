@@ -204,16 +204,23 @@ Appendix \ref{app:ellipse_derivation} presents a derivation of the equation of t
 
 In an attempt to render shadows more quickly, another technique was attempted. The code for this technique can be found in the \texttt{newRayTracing} branch of the git repository in the file \texttt{rayTracing.py}. This second method is a refinement of the following naive method:
 
-Suppose you have a pair of proceedures that are used to efficiently check whether a line segment intersects a sphere or a cylinder. You can iterate over the lights, and over all the pixels in the image, and construct the line segment from the light to the center of the pixel. Then go through all the spheres and cylinders checking for an intersection. At the first intersection, the light intensity at the pixel is decremented and we move on to the next pair of a light and a pixel. The motivation behind this method is that there is no step of merging the shadow of each point light source. [Consider writing out pseudo code for this.]
+Suppose you have a pair of proceedures that are used to efficiently check whether a line segment intersects a sphere or a cylinder. You can iterate over the lights, and over all the pixels in the image, and construct the line segment from the light to the center of the pixel. Then go through all the spheres and cylinders checking for an intersection. At the first intersection, the light intensity at the pixel is decreased by a fraction of its maximum value and we move on to the next pair of a light and a pixel. The motivation behind this method is that it is not necessary to merge the shadow of each point light source, a step that is a substantial time-waster in the first method.
 
 The innermost loop (over all spheres and cylinders) can be accelerated by use of a space partitioning method.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{clumping_figure.png}
+    \caption{dfsd}
+    \label{fig:shadow_2}
+\end{figure}
 
 The refinement that can be added is simplest to understand if we restrict ourselves temporarily to intersections with spheres. For each light source we imagine a pyramid with the region-of-interest of the shadow plane as its base and the light source as its vertex. We divide the pyramid into chunks and to each chunk associate all the spheres with a center near the chunk. When checking if a line segment inersects any sphere, we can ignore any sphere not in a chunk near the line segment. OK, but how do we organize this in practice? In our implementation, the pyramid is first divided into horizontal regions...
 
 [Mention inspiration from nearest neighbor algorithm]
 
 
-It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting ``image'' is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall.
+It should also be very fast to render shadows using openGL. Shadowmaps are a standard technique for rendering dynamic shadows. In shadowmapping, a scene is rendered from the perspective of a point light source and the resulting ``image'' is colored according to how far each part of the image is from the light. Shadowmapping typically goes on to use this information to shade a rendering of the same scene from another perspective, but we only want an image of the shadow on the wall. Therefore we would instead iterate over the pixels in the image and compare the depth of each to the calculated depth at the relevant point in the shadow map. If the depths match to within some approximation then that pixel is unshadowed, and inversely, if they differ, the pixel is shadowed. That this lighting method is dynamic is advantageous because the shadow will have to be rendered with respect to multiple point light sources. Like the first method, this method has the downside of requiring that the shadows from each light be averaged.
 
 \section{Genetic Algorithm Solutions} \label{GA}
 We believe approximate solutions to the forward problem may be possible using genetic algorithms for creating ``abstract'' data that fits a given shadow.  The question then becomes how to represent data for each possible solution to the problem in a genome that allows simple crossovers and mutations.  Some possible representations are as follows: 
