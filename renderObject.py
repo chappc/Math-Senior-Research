@@ -57,12 +57,6 @@ def createTexDL(width, height, vertices):
 
   return newList
 
-def cube( q, edges, vertices, radius ):
-  for edge in edges:
-    cylinder( q, vertices[edge[0]], vertices[edge[1]], radius )
-  for vertex in vertices:
-    sphere( q, vertex, radius )
-
 
 def sphere( q, v, r ):
   x,y,z = v
@@ -104,6 +98,12 @@ def cylinder( q, v1, v2, r ):
   gluCylinder( q, r, r, v, 20, 1 )
   glPopMatrix()
 
+def pipes( q, edges, vertices, radius ):
+  for edge in edges:
+    cylinder( q, vertices[edge[0]], vertices[edge[1]], radius )
+  for vertex in vertices:
+    sphere( q, vertex, radius )
+
 def build_v_and_e(strands):
   verticies = []
   edges = []
@@ -116,6 +116,116 @@ def build_v_and_e(strands):
       edges.append((i-1,i))
       i += 1
   return verticies,edges
+  
+def setup_GL():
+  
+  # Start pygame
+  pygame.init()
+  display = (1024,720)
+  pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+
+  # Set background color
+  glClearColor (.1, .1, .1, 1.0)
+  #
+  glEnable(GL_COLOR_MATERIAL)
+  glEnable(GL_TEXTURE_2D)
+
+  # make smooth looking pictures
+  glEnable(GL_BLEND)
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+  #glEnable(GL_SMOOTH)
+
+  # Set shader properties of objects
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, (0.7, 0.7, 0.7, 1.0))
+  glMaterialfv(GL_FRONT, GL_SPECULAR, (1.0, 1.0, 1.0, 1.0))
+  glMaterialfv(GL_FRONT, GL_SHININESS, (100.0))
+  glShadeModel (GL_SMOOTH);
+
+  # Set light position and intensity
+  glLightfv( GL_LIGHT0, GL_POSITION, ( -20, 100, -0.5, 0.2 ) )
+  glLightfv( GL_LIGHT0, GL_DIFFUSE, ( 1, 1, 1, .2 ) )
+  glLightfv( GL_LIGHT0, GL_SPECULAR, ( 1, 1, 1, .2 ) )
+  glLightfv( GL_LIGHT0, GL_AMBIENT, ( .8, .8, .8, 1 ) )
+
+  # Allow GL to figure out how to render objects with depth
+  glEnable(GL_DEPTH_TEST)
+  glEnable(GL_AUTO_NORMAL)
+  #glEnable(GL_NORMALIZE)
+
+  quadric=gluNewQuadric()
+  gluQuadricNormals(quadric, GLU_SMOOTH)
+  gluQuadricTexture(quadric, GL_TRUE)
+
+  gluPerspective(16, (1.0*display[0]/display[1]), 0.1, 50.0)
+  glTranslatef(0.0, 0.0, -10)
+  
+  return quadric
+  
+def get_key_input():
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+      pygame.quit()
+      quit()
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+  glEnable(GL_LIGHTING)
+  glEnable(GL_LIGHT0)
+  
+  pressed = pygame.key.get_pressed()
+  if pressed[pygame.K_UP]:
+    x = 1
+  elif pressed[pygame.K_DOWN]:
+    x = -1
+  else:
+    x = 0
+  if pressed[pygame.K_RIGHT]:
+    y = -1
+  elif pressed[pygame.K_LEFT]:
+    y = 1
+  else:
+    y = 0
+  if x != 0 or y != 0:
+    glRotatef(2, x, y, 0)
+
+
+
+def draw_scheme(region, quadric, edges, vertices, light, radius, texData, res):
+  
+  x0,x1,y0,y1 = region
+  width, height = res
+
+  verticesW = (
+    (x0, y0, 0),
+    (x1, y0, 0),
+    (x1, y1, 0),
+    (x0, y1, 0)
+    )
+  
+  edgesW = (
+    (0,1),
+    (1,2),
+    (2,3),
+    (0,3)
+    )
+  
+  # Set object color
+  glColor3fv((.1, .2, .3))
+  pipes(quadric, edges, vertices, radius)
+  pipes(quadric, edgesW, verticesW, 0.02)
+  glColor3fv((1.0, 1.0, 1.0))
+  sphere(quadric, light, 0.04)
+  glPushMatrix()
+  glTranslatef(0,0,verticesW[0][2])
+  glColor3fv((1, 1, 1))
+  texture = bindImage(texData, width, height)
+  glBindTexture(GL_TEXTURE_2D, texture)
+  glCallList(createTexDL(width, height, verticesW))
+  glPopMatrix()
+  glDeleteTextures([texture])
+  glDisable(GL_LIGHTING)
+  pygame.display.flip()
+  pygame.time.wait(8)
+  
   
 def main(strandFile, shadowFile):
   lights, radius, region, resolution, strands = parse_file(strandFile)
@@ -151,7 +261,7 @@ def main(strandFile, shadowFile):
   glMaterialfv(GL_FRONT, GL_DIFFUSE, (0.7, 0.7, 0.7, 1.0))
   glMaterialfv(GL_FRONT, GL_SPECULAR, (1.0, 1.0, 1.0, 1.0))
   glMaterialfv(GL_FRONT, GL_SHININESS, (100.0))
-  glShadeModel (GL_SMOOTH);
+  glShadeModel(GL_SMOOTH)
 
   # Set light position and intensity
   glLightfv( GL_LIGHT0, GL_POSITION, ( -20, 100, -0.5, 0.2 ) )
@@ -200,8 +310,8 @@ def main(strandFile, shadowFile):
     
     # Set object color
     glColor3fv((.1, .2, .3))
-    cube(quadric, edges, vertices, radius)
-    cube(quadric, edgesW, verticesW, 0.02)
+    pipes(quadric, edges, vertices, radius)
+    pipes(quadric, edgesW, verticesW, 0.02)
     glPushMatrix()
     glTranslatef(0,0,verticesW[0][2])
     # Set object color
