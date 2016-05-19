@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 from deap import base, creator, tools
 import Image, ImageChops, ImageDraw
 import math, operator
@@ -18,9 +19,9 @@ def diff(im1, im2):
     return sum/(i*j)
 
 NUM_NODES = 30
-RADIUS = 0.025
-#LIGHTS = [(0.0,0.0,1.0),(0.01,0.0,1.0),(-0.01,0.0,1.0),(0.0,0.01,1.0),(0.0,-0.01,1.0),(0.007071,0.007071,1.0),(-0.007071,0.007071,1.0),(0.007071,-0.007071,1.0),(-0.007071,-0.007071,1.0)]
-LIGHTS = [(0.0,1.0,1.0),(0.0125,1.0,1.0),(0.0,0.9875,1.0),(0.0125,0.9875,1.0)]
+RADIUS = 0.0125
+#LIGHTS = [(0.0,1.0,1.0),(0.01,1.0,1.0),(-0.01,1.0,1.0),(0.0,0.01,1.0),(0.0,-0.01,1.0),(0.007071,0.007071,1.0),(-0.007071,0.007071,1.0),(0.007071,-0.007071,1.0),(-0.007071,-0.007071,1.0)]
+LIGHTS = [(0.0,1.0,1.0)]
 PROJECTION = (0.00625, 0.99375, 1.0)
 REGION = (0.0, 1.0, 0.0, 1.0)
 N_IND = 200
@@ -28,7 +29,7 @@ N_GEN = 500
 CR_PROB = .6
 MUT_PROB = 0.12
 
-original_canvas = Image.open("hibiscus_cartoon.png", 'r')
+original_canvas = Image.open("chair.png", 'r')
 RESOLUTION = original_canvas.size
 
 blank_canvas = Image.new('L', RESOLUTION, "white")
@@ -86,15 +87,16 @@ def make_poster(ind, res, r):
   c = Image.new('RGBA', res, "white")
   cd = ImageDraw.Draw(c)
   rad = int(res[0]*r)
+  thk = res[0]/1000 + 1
   for i in xrange(0,len(ind),3):
     x,y,z = calculate_loc(ind[i],ind[i+1],ind[i+2])
     xpix = int(x*res[0])
     ypix = int((PROJECTION[2]-y)*res[0])
     zpix = int(z*res[1])
     zoff = zpix + ypix
-    color = "#%06d"%(random.randint(0, 999999))
-    cd.ellipse([xpix-rad, zoff-rad, xpix+rad, zoff+rad], outline=color)
-    cd.line([(xpix,zpix),(xpix,zoff)], fill=color)
+    color = "#%06x"%(random.randint(0, 0xffffff))
+    cd.ellipse([xpix-rad, zoff-rad, xpix+rad, zoff+rad], outline=color, fill=color)
+    cd.line([(xpix,zpix),(xpix,zoff)], fill=color, width=thk)
   for l in LIGHTS:
     xpix = int(l[0]*res[0])
     ypix = int(l[1]*res[1])
@@ -223,7 +225,8 @@ class GA():
     dif.paste(final_canvas)
     set_view(winner)
     if self.winner == None or self.winner.fitness.values[0] > winner.fitness.values[0]:
-      self.winner = winner
+      self.winner = deepcopy(winner)
+      make_poster( self.winner, (9000, 9000), RADIUS ).save("poster_chair_"+g+".png", "PNG")
     return winner
   
   def run_multiple(self, pop_size, n_gen, n_sectors):
@@ -243,9 +246,9 @@ if __name__=="__main__":
   thd.start()
 
   g = GA()
-  w = g.run_multiple(N_GEN, N_IND, N_IND)
+  w = g.run_multiple(N_GEN, N_IND, 20)
   set_view(w)
   
-  final_canvas.save("output_hib.png","PNG")
-  make_poster( w, (9000, 9000), RADIUS ).save("poster_hib.png", "PNG")
+  final_canvas.save("output_chair.png","PNG")
+  make_poster( w, (9000, 9000), RADIUS ).save("poster_chair.png", "PNG")
   
