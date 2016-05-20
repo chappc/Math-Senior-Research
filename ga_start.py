@@ -8,16 +8,6 @@ import threading
 from test_shadow import cast_shadow_sphere
 import renderObject
 
-def diff(im1, im2):
-    "Calculate the root-mean-square difference between two images"
-
-    h = ImageChops.difference(im1, im2).load()
-    sum = 0
-    for i in xrange(im1.width):
-      for j in xrange(im1.height):
-        sum += (h[i,j]/255.0)**2
-    return sum/(i*j)
-
 NUM_NODES = 30
 RADIUS = 0.0125
 #LIGHTS = [(0.0,1.0,1.0),(0.01,1.0,1.0),(-0.01,1.0,1.0),(0.0,0.01,1.0),(0.0,-0.01,1.0),(0.007071,0.007071,1.0),(-0.007071,0.007071,1.0),(0.007071,-0.007071,1.0),(-0.007071,-0.007071,1.0)]
@@ -29,19 +19,28 @@ N_GEN = 500
 CR_PROB = .6
 MUT_PROB = 0.12
 
-original_canvas = Image.open("chair.png", 'r')
-RESOLUTION = original_canvas.size
+original_canvas = None
 
-blank_canvas = Image.new('L', RESOLUTION, "white")
-canvases = [Image.new('L', RESOLUTION, "white") for x in LIGHTS]
-final_canvas = Image.new('RGBA', RESOLUTION, "white")
-mask = Image.new('RGBA', RESOLUTION, (255,255,255,255/len(LIGHTS)))
-dif = Image.new('RGBA', RESOLUTION, "white")
-difmask = Image.new('RGBA', RESOLUTION, (0,0,255,64))
-im = Image.new('RGBA', RESOLUTION, "white")
+blank_canvas = None
+canvases = None
+final_canvas = None
+mask = None
+dif = None
+difmask = None
+im = None
 edges = []
 vertices = []
 threadLock = threading.Lock()
+
+def diff(im1, im2):
+    "Calculate the root-mean-square difference between two images"
+
+    h = ImageChops.difference(im1, im2).load()
+    sum = 0
+    for i in xrange(im1.width):
+      for j in xrange(im1.height):
+        sum += (h[i,j]/255.0)**2
+    return sum/(i*j)
 
 
 def resetCanvas():
@@ -242,6 +241,25 @@ class GA():
   
 if __name__=="__main__":
   
+  if len(sys.argv) < 4:
+    print 'usage: python ', sys.argv[0], '<input_shadow> <sphere-radius> <n_spheres>'
+    sys.exit(1)
+    
+  NUM_NODES = sys.argv[3]
+  RADIUS = sys.argv[2]
+    
+  original_canvas = Image.open(sys.argv[1], 'r')
+  RESOLUTION = original_canvas.size
+  
+  blank_canvas = Image.new('L', RESOLUTION, "white")
+  canvases = [Image.new('L', RESOLUTION, "white") for x in LIGHTS]
+  final_canvas = Image.new('RGBA', RESOLUTION, "white")
+  mask = Image.new('RGBA', RESOLUTION, (255,255,255,255/len(LIGHTS)))
+  dif = Image.new('RGBA', RESOLUTION, "white")
+  difmask = Image.new('RGBA', RESOLUTION, (0,0,255,64))
+  im = Image.new('RGBA', RESOLUTION, "white")
+
+  
   thd = render(1, 'render_thread', 1)
   thd.start()
 
@@ -251,4 +269,8 @@ if __name__=="__main__":
   
   final_canvas.save("output_chair.png","PNG")
   make_poster( w, (9000, 9000), RADIUS ).save("poster_chair.png", "PNG")
-  
+
+# An example set of nodes
+"""
+[0.669316359495516, 0.8786361884175978, -0.12914515448134428, 1.3737237178654997, -0.4179486508622152, 0.054630455931436644, -0.13115131528269786, 0.506677420551265, 0.1052087338193465, 0.2091780582747533, 0.36837344953433626, 0.2742494660364548, 0.49149119940878844, 0.853800542816882, 0.358683597516535, 0.42606856108020613, 4.549647031551695, 0.3684101176017201, 0.4315628261742692, 0.3992349908803633, 0.3792743667959751, 0.7750731778053679, 0.3459859121103988, 0.38733671066585684, 0.4958459960839606, 0.654314300888096, 0.40234286371213973, -3.5679184417609227, 0.32576407619396347, 0.41696039470678925, 0.4848959088242933, 0.6680788018301153, 0.5572948931250068, 0.3960049974743814, 0.5972085665764231, 0.6009857287193738, 0.5728270862951581, 0.41850512150256736, 0.6232006441396265, 0.8923143830807874, 0.1598359744444511, 0.6633349763626302, 0.2802868566221288, 0.3503061790049036, 0.6927135182594379, 0.4371031361889797, 0.3826306218336196, 0.7556747987015366, 0.5197720000950157, 0.23167293027298888, 0.760309541667037, 0.4369235666694813, 0.7378469142417843, 0.8350709384854299, 0.2201473025911713, 0.2935133711468777, 0.8420280547318663, 0.4810060901547438, 0.8172721412850502, 0.8476623271112064, 0.7548978700256253, 0.6634578372029551, 0.8490330244051729, 0.36091219444616274, 0.5693817738112044, 0.8527548461578318, 0.4817939348352729, 0.19086253941864356, 0.8551168232750943, 0.40855093596170056, 0.6309515230367053, 0.8706961999300601, 0.5484494099243666, 0.8916950508349166, 0.8714847193548565, 0.7856991847104724, 0.8195460583425671, 0.8859995515275587, 0.46581560751569673, 0.38450960220041563, 0.8951201055246604, 0.6430025229689946, 0.41839897597684617, 0.9065590704987587, 0.25691080140140626, 0.49251568558142256, 0.9236924201381929, 0.7145218000713363, 0.5434241722527415, 1.8561974289065342]
+"""
